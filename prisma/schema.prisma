@@ -1,0 +1,36 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ObjectId สำหรับ MongoDB
+  email     String   @unique
+  password  String
+  name      String
+  ChatRoom  ChatRoom[] // One-to-many: User มี ChatRoom หลายห้อง
+}
+
+model ChatRoom {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ObjectId สำหรับ MongoDB
+  title     String
+  createdAt DateTime @default(now())
+  userId    String   @db.ObjectId 
+  user      User     @relation(fields: [userId], references: [id]) // เชื่อมต่อกับ User
+  messages  Message[] // One-to-many: ห้องแชทมีข้อความหลายข้อความ
+}
+
+model Message {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId // ObjectId สำหรับ MongoDB
+  content    String
+  sender     String
+  createdAt  DateTime @default(now())
+  chatRoomId String   @db.ObjectId // ระบุว่าฟิลด์นี้เป็น ObjectId
+  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id]) // เชื่อมต่อกับ ChatRoom
+}
+
