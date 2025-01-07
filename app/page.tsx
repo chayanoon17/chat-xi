@@ -30,7 +30,7 @@ export default function SignIn() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen p-4 bg-neutral-950 text-white">
+    <div className="flex flex-col items-center justify-center h-screen p-4 bg-black text-white">
       <div className="w-full max-w-md  border-gray-200 rounded-lg p-8 ">
         <h1 className="text-3xl font-bold mb-8 text-center ">
           Welcome Back!

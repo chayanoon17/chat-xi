@@ -44,16 +44,7 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isSidebarOpen }) => {
                   className="block px-4 py-2 text-sm hover:bg-gray-200"
                   onClick={() => router.push('/profile')}
                 >
-                  Profile
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-sm hover:bg-gray-200"
-                  onClick={() => router.push('/settings')}
-                >
-                  Settings
+                  Home
                 </a>
               </li>
               

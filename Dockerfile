@@ -2,19 +2,19 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy package.json files first, to leverage Docker's cache
+# ติดตั้ง OpenSSL
+RUN apk update && apk add openssl
+
+# คัดลอกไฟล์ที่จำเป็น
 COPY package*.json ./
 RUN npm install
 
-# Copy .env file (make sure this file exists in the project root)
-COPY .env ./
-
-# Copy the rest of your application code
+# คัดลอกโค้ดของแอปพลิเคชัน
 COPY . .
 
-# Run Prisma generate and build
+# รัน Prisma generate และ build
 RUN npx prisma generate
 RUN npm run build
 
-# Start the app
+# เริ่มแอป
 CMD ["npm", "start"]

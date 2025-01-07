@@ -3,4 +3,5 @@ import { authOptions } from "../../../../lib/authOptions"; // Import from the co
 
 const handler = NextAuth(authOptions); // Use the imported authOptions
 
+
 export { handler as GET, handler as POST }; // Export for both GET and POST
