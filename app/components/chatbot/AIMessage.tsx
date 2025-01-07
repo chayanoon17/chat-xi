@@ -1,47 +1,143 @@
-import React from "react";
+// AIMessage.tsx
+import React, { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
+// ใช้ไอคอนจาก react-icons
+import { FaRobot } from 'react-icons/fa'
 
-const AIMessage: React.FC<{ answer: string; isLoading: boolean }> = ({
-  answer,
-  isLoading,
-}) => (
-  <div className="flex flex-col items-start space-y-2">
-    {/* รูปภาพ AI แบบ SVG */}
-    <div className="flex items-center space-x-2">
-      <div className="w-8 h-8">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          className="text-blue-500 w-8 h-8"
-        >
-          <path d="M12 2a10 10 0 100 20 10 10 0 000-20zM9 10a1 1 0 112 0v4a1 1 0 11-2 0v-4zm4 0a1 1 0 112 0v4a1 1 0 11-2 0v-4z" />
-        </svg>
+interface AIMessageProps {
+  answer: string
+  isLoading: boolean
+}
+
+// CodeBlock สำหรับโค้ด Markdown + ย่อ/ขยาย + Copy (เหมือนเดิม)
+const ChatGPTCodeBlock: React.FC<{
+  inline?: boolean
+  className?: string
+  children?: React.ReactNode
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  node?: any
+}> = ({ inline, className, children, node }) => {
+  const [copied, setCopied] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+
+  // จำนวนบรรทัดที่ให้โชว์ก่อน (เช่น 13)
+  const linesToShow = 13
+  const codeText = String(children || '')
+  const lines = codeText.split('\n')
+
+  let language = ''
+  if (className) {
+    const match = /language-(\w+)/.exec(className)
+    language = match ? match[1] : ''
+  }
+
+  let title = ''
+  const metastring = node?.properties?.metastring as string | undefined
+  if (metastring) {
+    const titleMatch = metastring.match(/title="([^"]+)"/)
+    if (titleMatch) {
+      title = titleMatch[1]
+    }
+  }
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(codeText)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
+
+  // inline code (backtick เดียว)
+  if (inline) {
+    return (
+      <code className="bg-gray-200 text-red-500 px-1 rounded">
+        {children}
+      </code>
+    )
+  }
+
+  const isLongCode = lines.length > linesToShow
+  const visibleLines = expanded ? lines : lines.slice(0, linesToShow)
+
+  return (
+    <div className="my-4 rounded-md overflow-hidden rounded-xl">
+      <div className="flex items-center justify-between bg-[#2f3031] px-4 py-2">
+        <span className="text-xs text-gray-300 font-medium">
+          {title || language || 'Untitled'}
+        </span>
+
+        <div className="flex items-center space-x-2">
+          {isLongCode && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="text-xs text-gray-300 bg-[#3c3c3c] px-2 py-1 rounded hover:bg-[#5e5e5e]"
+            >
+              {expanded ? 'Collapse' : 'Expand'}
+            </button>
+          )}
+          <button
+            onClick={handleCopy}
+            className="text-xs text-gray-300 bg-[#3c3c3c] px-2 py-1 rounded hover:bg-[#5e5e5e]"
+          >
+            {copied ? 'Copied!' : 'Copy'}
+          </button>
+        </div>
       </div>
-      <div className=" text-white px-4 py-2 rounded-lg">
-        <p>{isLoading ? `${answer}_` : answer}</p>
+
+      <SyntaxHighlighter
+        language={language}
+        style={vscDarkPlus}
+        showLineNumbers
+        customStyle={{
+          margin: 0,
+          padding: '1rem',
+          background: '#1e1e1e'
+        }}
+        lineNumberStyle={{
+          minWidth: '2rem',
+          paddingRight: '8px',
+          fontSize: '0.8rem',
+          opacity: 0.7
+        }}
+      >
+        {visibleLines.join('\n')}
+      </SyntaxHighlighter>
+
+      {!expanded && isLongCode && (
+        <div className="px-4 py-2 text-xs text-gray-500 bg-[#2f3031]">
+          ...บางส่วน (expand เพื่อดูเพิ่มเติม)
+        </div>
+      )}
+    </div>
+  )
+}
+
+const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
+  return (
+    <div className="flex items-start space-x-3 px-4 py-2">
+      {/* ส่วนไอคอน AI (FaRobot) แทนรูป */}
+      <div className="w-10 h-10 bg-zinc-700 rounded-full flex items-center justify-center">
+        <FaRobot className="text-white" size={20} />
+      </div>
+
+      {/* ส่วนข้อความ/โค้ด */}
+      <div className="px-4 py-2 rounded max-w-3xl w-full  text-white">
+      {isLoading && <div className="text-sm text-gray-400">Loading...</div>}
+
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            code: ChatGPTCodeBlock
+          }}
+        >
+          {answer}
+        </ReactMarkdown>
+
       </div>
     </div>
+  )
+}
 
-    {/* ปุ่มไลค์ */}
-    {/* <div className="flex mt-2">
-      <button className="flex items-center justify-center w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded">
-      <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth="1.5"
-          stroke="currentColor"
-          className="w-5 h-5 text-white"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M14 9l-5 5m0 0l5 5m-5-5h12"
-          />
-        </svg>
-      </button>
-    </div> */}
-  </div>
-);
-
-export default AIMessage;
+export default AIMessage

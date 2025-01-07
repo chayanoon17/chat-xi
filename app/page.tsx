@@ -33,7 +33,7 @@ export default function SignIn() {
     <div className="flex flex-col items-center justify-center h-screen p-4 bg-black text-white">
       <div className="w-full max-w-md  border-gray-200 rounded-lg p-8 ">
         <h1 className="text-3xl font-bold mb-8 text-center ">
-          Welcome Back!
+        Sign In
         </h1>
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="mb-4">
@@ -45,7 +45,7 @@ export default function SignIn() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="Enter your email address"
-                className="bg-zinc-900 w-full border-2 border-gray-300 px-3 py-2 rounded hover:border-black focus:border-black focus:outline-none"
+                className="bg-zinc-900 w-full px-3 py-2 rounded hover:border-black focus:border-black "
               />
             </div>
 
@@ -58,13 +58,13 @@ export default function SignIn() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="Enter your Password"
-                className="bg-zinc-900 w-full border-2 border-gray-300 px-3 py-2 rounded hover:border-black focus:border-black focus:outline-none"
+                className="bg-zinc-900 w-full  px-3 py-2 rounded hover:border-black focus:border-black f"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-black text-white py-2 rounded mb-4 border-2 border-black"
+              className="w-full bg-white text-black py-2 rounded mb-4 border-2 border-black"
             >
               Sign In
             </button>
