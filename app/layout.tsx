@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import SessionProvider from './components/SessionProvider'
 import './globals.css'
 
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
@@ -20,7 +21,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={inter.className}>
-         <div className='pt-15 min-h-screen flex flex-col '>
+         <div className='pt-15  min-h-screen flex flex-col bg-black'>
         <SessionProvider session={session}>{children}</SessionProvider>
          </div>
       </body>

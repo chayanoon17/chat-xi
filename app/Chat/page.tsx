@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar/Navbar";
 import Sidebar from "../components/Sidebar/sidebar";
 import { SessionProvider } from "next-auth/react";
 
+
 const HomePage: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();

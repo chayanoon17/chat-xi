@@ -18,7 +18,12 @@ const ContactUs: React.FC = () => {
           Contact Developer.
         </div>
       </div>
-
+      <div className="">
+  <Link href="/profile">
+  <button className="glow-on-hover" type="button">
+          Go back
+          </button></Link>
+</div>
       {/* Card Section */}
       <div className="flex flex-col items-center  p-6 rounded-lg shadow-lg mb-12 w-full max-w-3xl text-center">
       <Image
@@ -84,12 +89,7 @@ const ContactUs: React.FC = () => {
           
         </div>
       </div>
-      <div className="mt-8">
-  <Link href="/profile">
-  <button className="glow-on-hover" type="button">
-          Go back
-          </button></Link>
-</div>
+      
     </div>
   );
 };
