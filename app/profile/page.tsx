@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import HeroBubbles from '../components/UI/HeroBubbles';
 import Navbar from '../components/UI/Navbar';
-import Particles from '../components/UI/Particles'; 
 import Footer from '../components/Footer/Footer';
 
 
@@ -24,19 +23,16 @@ const Profile: React.FC = () => {
   return (
     <div className="relative h-screen w-full">
       <Navbar/>
-      {/* ใส่ Particles เป็นพื้นหลัง */}
-      {/* เนื้อหาหลักของโปรไฟล์ */}
       {status === 'authenticated' && session?.user ? (
         <div className="flex flex-col items-center justify-center min-h-screen p-6 relative z-10 bg-black">
       <HeroBubbles/>
-      {/* <GlobeAnimation/> */}
-      <Particles />
-          <div className="p-8 rounded-lg shadow-lg w-full max-w-xl bg-opacity-80">
+
+          {/* <div className="p-8 rounded-lg shadow-lg w-full max-w-xl bg-opacity-80">
             <h1 className="text-3xl font-semibold text-white text-center mb-4">Next Js Typescript Prsima MongoDB</h1>
             <p className="text-white text-lg font-medium mb-2">Welcome, {session.user.name}!</p>
             <p className="text-white text-base mb-4">Email: {session.user.email}</p>
 
-          </div>
+          </div> */}
         </div>
         
       ) : (

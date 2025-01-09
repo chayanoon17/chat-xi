@@ -45,7 +45,7 @@ export default function SignIn() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="Enter your email address"
-                className="bg-zinc-900 w-full px-3 py-2 rounded hover:border-black focus:border-black "
+                className="bg-zinc-900 w-full px-3 py-2 rounded-full hover:border-black focus:border-black "
               />
             </div>
 
@@ -58,13 +58,13 @@ export default function SignIn() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="Enter your Password"
-                className="bg-zinc-900 w-full  px-3 py-2 rounded hover:border-black focus:border-black f"
+                className="bg-zinc-900 w-full  px-3 py-2 rounded-full hover:border-black focus:border-black f"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-white text-black py-2 rounded mb-4 border-2 border-black"
+              className="w-full bg-white text-black py-2 rounded-full mb-4 border-2 border-black"
             >
               Sign In
             </button>

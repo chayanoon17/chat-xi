@@ -1,3 +1,4 @@
+// Conversation.tsx
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import MessageInput from './MessageInput';
 import MessageList from './MessageList';
@@ -20,7 +21,6 @@ interface MessageData {
 const Conversation: React.FC<ConversationProps> = ({ chatRoomId }) => {
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
 
@@ -48,7 +48,6 @@ const Conversation: React.FC<ConversationProps> = ({ chatRoomId }) => {
   const fetchAIResponse = async (userMessage: string) => {
     try {
       console.log('Start fetchAIResponse');
-      setLoading(true);
 
       const res = await fetch('/api/auth/chat', {
         method: 'POST',
@@ -64,36 +63,38 @@ const Conversation: React.FC<ConversationProps> = ({ chatRoomId }) => {
 
       const reader = res.body?.getReader();
       const decoder = new TextDecoder('utf-8');
+      let done = false;
       let accumulatedResponse = '';
 
       if (reader) {
         console.log('Start streaming response');
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+        while (!done) {
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+          if (value) {
+            const chunkValue = decoder.decode(value);
+            accumulatedResponse += chunkValue;
 
-          const chunk = decoder.decode(value, { stream: true });
-          accumulatedResponse += chunk;
+            console.log('Received chunk:', chunkValue);
+            console.log('Accumulated Response:', accumulatedResponse);
 
-          console.log('Received chunk:', chunk);
-          console.log('Accumulated Response:', accumulatedResponse);
+            // อัปเดตข้อความที่กำลังโหลด
+            setMessages((prevMessages) => {
+              const updatedMessages = [...prevMessages];
+              const lastIndex = updatedMessages.length - 1;
 
-          // อัปเดตข้อความที่กำลังโหลด
-          setMessages((prevMessages) => {
-            const updatedMessages = [...prevMessages];
-            const lastIndex = updatedMessages.length - 1;
+              if (lastIndex >= 0) {
+                updatedMessages[lastIndex] = {
+                  ...updatedMessages[lastIndex],
+                  answer: accumulatedResponse,
+                  isLoading: true, // สถานะยังคงเป็น loading ระหว่างสตรีม
+                };
+              }
 
-            if (lastIndex >= 0) {
-              updatedMessages[lastIndex] = {
-                ...updatedMessages[lastIndex],
-                answer: accumulatedResponse,
-                isLoading: true, // สถานะยังคงเป็น loading ระหว่างสตรีม
-              };
-            }
-
-            return updatedMessages;
-          });
+              return updatedMessages;
+            });
+          }
 
           await new Promise((resolve) => setTimeout(resolve, 0));
         }
@@ -106,7 +107,6 @@ const Conversation: React.FC<ConversationProps> = ({ chatRoomId }) => {
           if (lastIndex >= 0) {
             updatedMessages[lastIndex] = {
               ...updatedMessages[lastIndex],
-              answer: accumulatedResponse,
               isLoading: false, // อัปเดตสถานะเป็น false เมื่อคำตอบเสร็จแล้ว
             };
           }
@@ -119,9 +119,21 @@ const Conversation: React.FC<ConversationProps> = ({ chatRoomId }) => {
     } catch (err) {
       console.error('Error during fetchAIResponse:', err);
       setError('เกิดข้อผิดพลาดในการส่งข้อความ');
-    } finally {
-      console.log('End fetchAIResponse');
-      setLoading(false);
+
+      // อัปเดตข้อความล่าสุดให้ไม่โหลด
+      setMessages((prevMessages) => {
+        const updatedMessages = [...prevMessages];
+        const lastIndex = updatedMessages.length - 1;
+
+        if (lastIndex >= 0) {
+          updatedMessages[lastIndex] = {
+            ...updatedMessages[lastIndex],
+            isLoading: false,
+          };
+        }
+
+        return updatedMessages;
+      });
     }
   };
 
@@ -145,23 +157,21 @@ const Conversation: React.FC<ConversationProps> = ({ chatRoomId }) => {
 
   return (
     <div className="flex flex-col h-screen">
-      {/* Message List - Top Section */}
-      <div className="flex-1 w-full mx-auto max-w-3xl px-4 p-6 space-y-4">
-        <MessageList messages={messages} error={error} />
-      </div>
+  {/* Message List */}
+  <div className="flex-1 overflow-y-auto px-4 py-6 mx-auto max-w-3xl w-full">
+    <MessageList messages={messages} error={error} />
+    <div ref={endOfMessagesRef} />
+  </div>
 
-      {/* Message Input - Bottom Section */}
-      <div className="sticky bottom-0 w-full">
-        <MessageInput
-          message={message}
-          setMessage={setMessage}
-          handleSendMessage={handleSendMessage}
-          loading={loading}
-        />
-      </div>
+  {/* Message Input */}
+  <MessageInput
+    message={message}
+    setMessage={setMessage}
+    handleSendMessage={handleSendMessage}
+    loading={false}
+  />
+</div>
 
-      <div ref={endOfMessagesRef} />
-    </div>
   );
 };
 

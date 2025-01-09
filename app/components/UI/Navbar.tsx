@@ -8,6 +8,8 @@ import { signOut } from "next-auth/react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import DrawOutlineButton from "./DrawOutlineButton";
+
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,7 +27,7 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* โลโก้ */}
         <div className="text-xl font-bold">
-          <Link href="/">
+          <Link href="">
             <span className="flex items-center space-x-2">
               {/* ใช้ span ครอบ เพื่อสามารถวาง svg และข้อความได้ง่าย */}
               <svg
@@ -67,50 +69,33 @@ const Navbar: React.FC = () => {
 
         {/* เมนูหลักบนจอใหญ่ */}
         <div className="hidden md:flex space-x-6">
-          <Link href="/about">
-            <span className="hover:text-gray-300 cursor-pointer">About</span>
+
+          <Link href="/Contact">
+          <DrawOutlineButton>Contact</DrawOutlineButton>
           </Link>
-          <Link href="/services">
-            <span className="hover:text-gray-300 cursor-pointer">Services</span>
-          </Link>
-          <Link href="/contact">
-            <span className="hover:text-gray-300 cursor-pointer">Contact</span>
-          </Link>
-          <button onClick={() => signOut({ callbackUrl: "/" })}>
-            <span className="hover:text-gray-300 cursor-pointer">logout</span>
-          </button>
+          <DrawOutlineButton onClick={() => signOut({ callbackUrl: "/" })}>
+    Logout
+  </DrawOutlineButton>
         </div>
       </div>
 
       {/* เมนูบนจอเล็ก แสดงเมื่อคลิกปุ่ม */}
       {isOpen && (
         <div className="md:hidden bg-black border-t border-gray-700">
-          <div className="px-4 py-3 space-y-2">
-            <Link href="/about">
-              <span className="block hover:text-gray-300 cursor-pointer">
-                About
-              </span>
-            </Link>
-            <Link href="/services">
-              <span className="block hover:text-gray-300 cursor-pointer">
-                Services
-              </span>
-            </Link>
-            <Link href="/contact">
-              <span className="block hover:text-gray-300 cursor-pointer">
-                Contact
-              </span>
-            </Link>
-            {/* แทนที่จะใช้ Link ให้ใช้ button ธรรมดาในการ signOut */}
-            <button
-              className="block hover:text-gray-300 cursor-pointer text-left w-full"
-              onClick={() => signOut({ callbackUrl: "/" })}
-            >
-              logout
-            </button>
-          </div>
-
+        <div className="px-4 py-3 space-y-2">
+          <Link href="/Contact">
+            <DrawOutlineButton className="w-full text-left">
+              Contact
+            </DrawOutlineButton>
+          </Link>
+          <DrawOutlineButton
+            className="w-full text-left"
+            onClick={() => signOut({ callbackUrl: "/" })}
+          >
+            Logout
+          </DrawOutlineButton>
         </div>
+      </div>
       )}
     </nav>
   );

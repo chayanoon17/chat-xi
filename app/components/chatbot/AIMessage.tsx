@@ -12,7 +12,7 @@ interface AIMessageProps {
   isLoading: boolean
 }
 
-// CodeBlock สำหรับโค้ด Markdown + ย่อ/ขยาย + Copy (เหมือนเดิม)
+// ChatGPTCodeBlock คอมโพเนนต์สำหรับแสดงโค้ดใน Markdown
 const ChatGPTCodeBlock: React.FC<{
   inline?: boolean
   className?: string
@@ -116,16 +116,15 @@ const ChatGPTCodeBlock: React.FC<{
 
 const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
   return (
-    <div className="flex items-start space-x-3 px-4 py-2">
+    <div className="flex space-x-3 px-4 py-2">
       {/* ส่วนไอคอน AI (FaRobot) แทนรูป */}
       <div className="w-10 h-10 bg-zinc-700 rounded-full flex items-center justify-center">
         <FaRobot className="text-white" size={20} />
       </div>
 
       {/* ส่วนข้อความ/โค้ด */}
-      <div className="px-4 py-2 rounded max-w-3xl w-full  text-white">
-      {isLoading && <div className="text-sm text-gray-400">Loading...</div>}
-
+      <div className="px-4 py-2 rounded max-w-3xl w-full text-white">
+        {/* แสดงข้อความที่ถูกสตรีมมา */}
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
@@ -135,6 +134,8 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
           {answer}
         </ReactMarkdown>
 
+        {/* แสดง Loading Indicator เมื่อยังคงสตรีมข้อมูล */}
+        {isLoading && <div className="text-sm text-gray-400 mt-2">Loading...</div>}
       </div>
     </div>
   )

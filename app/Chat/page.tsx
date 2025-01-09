@@ -42,20 +42,21 @@ const HomePage: React.FC = () => {
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 flex flex-col">
-            {/* Navbar */}
-            <Navbar onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
-            {/* Chat Content */}
-            <div className="flex-1 overflow-y-auto p-0">
-              {selectedRoomId ? (
-                <Conversation chatRoomId={selectedRoomId} />
-              ) : (
-                <div className="flex text-white items-center justify-center h-full text-center">
-                  <div className="typewriter">Select a chat room to begin processing.</div>
-                </div>
-              )}
-            </div>
-          </div>
+          <div className="flex-1 flex flex-col overflow-hidden">
+  <Navbar onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
+  <div className="flex-1 overflow-y-auto p-4 md:p-6">
+    {selectedRoomId ? (
+      <Conversation chatRoomId={selectedRoomId} />
+    ) : (
+      <div className="flex text-white items-center justify-center h-full text-center">
+        <div className="typewriter">
+          Select a chat room to begin processing.
+        </div>
+      </div>
+    )}
+  </div>
+</div>
+
         </div>
       </SessionProvider>
     );
