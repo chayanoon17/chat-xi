@@ -94,24 +94,26 @@ export async function DELETE(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    // ดึง query parameter
     const { searchParams } = new URL(req.url);
     const chatRoomId = searchParams.get('chatRoomId');
+    const page = parseInt(searchParams.get('page') || '0', 10);
+    const pageSize = 20;
 
-    // ตรวจสอบว่ามี chatRoomId
     if (!chatRoomId || typeof chatRoomId !== 'string') {
       return NextResponse.json({ error: 'chatRoomId is required' }, { status: 400 });
     }
 
-    // ดึงข้อความจากฐานข้อมูล
     const messages = await prisma.message.findMany({
       where: { chatRoomId },
       orderBy: { createdAt: 'asc' },
+      select: { id: true, sender: true, content: true, createdAt: true },
+      skip: page * pageSize,
+      take: pageSize,
     });
 
     return NextResponse.json({ messages });
   } catch (error) {
-    console.error('Error in GET handler:', error instanceof Error ? error.message : error);
-    return NextResponse.json({ error: 'Internal Server Error', details: error instanceof Error ? error.message : error }, { status: 500 });
+    console.error('Error in GET handler:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

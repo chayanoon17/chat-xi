@@ -1,11 +1,24 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
+@layer utilities {
+  ::-webkit-scrollbar {
+    width: 6px; /* ความกว้าง Scrollbar */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #4b5563; /* สี Scrollbar */
+    border-radius: 8px; /* มุมโค้ง Scrollbar */
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: #1f2937; /* สีพื้นหลังของ Scrollbar */
+  }
+}
 
 body {
   background-color: black;
-
 }
 .glow-on-hover {
     width: 220px;

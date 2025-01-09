@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google'
 import { getServerSession } from 'next-auth'
 import SessionProvider from './components/SessionProvider'
 import './globals.css'
+import Loading from './loading'
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -23,6 +24,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       <body className={inter.className}>
          <div className='pt-15  min-h-screen flex flex-col bg-black'>
         <SessionProvider session={session}>{children}</SessionProvider>
+        <Loading></Loading>
          </div>
       </body>
     </html>

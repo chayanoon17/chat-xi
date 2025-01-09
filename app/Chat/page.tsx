@@ -7,7 +7,6 @@ import Navbar from "../components/Navbar/Navbar";
 import Sidebar from "../components/Sidebar/sidebar";
 import { SessionProvider } from "next-auth/react";
 
-
 const HomePage: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -31,33 +30,36 @@ const HomePage: React.FC = () => {
   if (status === "authenticated" && session?.user) {
     return (
       <SessionProvider session={session}>
-
-        <div className={`flex h-screen bg-neutral-950 transition-all duration-300`}>
+        <div className={`flex h-screen bg-black transition-all duration-300`}>
           {/* Sidebar */}
           <div
             className={`bg-zinc-900 h-full transition-all duration-300 ${
               isSidebarOpen ? "w-64" : "w-0"
             }`}
           >
-            {isSidebarOpen && <Sidebar onSelectChatRoom={handleSelectChatRoom} />}
+            {isSidebarOpen && (
+              <Sidebar onSelectChatRoom={handleSelectChatRoom} />
+            )}
           </div>
 
           {/* Main Content */}
           <div className="flex-1 flex flex-col overflow-hidden">
-  <Navbar onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
-  <div className="flex-1 overflow-y-auto p-4 md:p-6">
-    {selectedRoomId ? (
-      <Conversation chatRoomId={selectedRoomId} />
-    ) : (
-      <div className="flex text-white items-center justify-center h-full text-center">
-        <div className="typewriter">
-          Select a chat room to begin processing.
-        </div>
-      </div>
-    )}
-  </div>
-</div>
-
+            <Navbar
+              onToggleSidebar={toggleSidebar}
+              isSidebarOpen={isSidebarOpen}
+            />
+            <div className=" overflow-y-auto p-0 md:p-6">
+              {selectedRoomId ? (
+                <Conversation chatRoomId={selectedRoomId} />
+              ) : (
+                <div className="flex text-white items-center justify-center h-full text-center">
+                  <div className="typewriter">
+                    Select a chat room to begin processing.
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </SessionProvider>
     );
@@ -65,7 +67,9 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <p className="text-xl text-gray-600">You need to be logged in to view this page.</p>
+      <p className="text-xl text-gray-600">
+        You need to be logged in to view this page.
+      </p>
     </div>
   );
 };

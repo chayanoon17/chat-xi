@@ -19,7 +19,7 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isSidebarOpen }) => {
 
   
   return (
-    <div className="flex text-white p-1 shadow-md items-center justify-starts">
+    <div className="flex text-white p-1 shadow-md items-center justify-starts ">
      <button onClick={onToggleSidebar} className="p-2 hover:bg-zinc-700 rounded-md">
         {isSidebarOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
       </button>
