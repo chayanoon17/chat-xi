@@ -23,7 +23,7 @@ const Navbar: React.FC = () => {
   }, [status, router]);
 
   return (
-    <nav className="bg-neutral-950 text-white w-full">
+    <nav className="bg-black text-white w-full">
       <div className="max-w-7xl mx-auto  px-4 py-4 flex items-center justify-between">
         {/* โลโก้ */}
         <div className="text-xl font-bold">

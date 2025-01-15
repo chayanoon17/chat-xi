@@ -8,6 +8,8 @@ import { Label } from "./components/UI/label";
 import { Input } from "./components/UI/input";
 import { cn } from "@/utils";
 
+
+
 export default function SignIn() {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
@@ -35,7 +37,7 @@ export default function SignIn() {
   }
 
   return (
-    <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-black dark:bg-black">
+    <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-6 md:p-8 shadow-input bg-black dark:bg-black ">
 
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
         Welcome to Chat-XI
@@ -46,11 +48,11 @@ export default function SignIn() {
       </p>
 
           <form onSubmit={handleSubmit} className="my-8">
-          <LabelInputContainer className="mb-4">
+          <LabelInputContainer className="mb-6">
           <Label htmlFor="email">Email Address</Label>
           <Input id="email" placeholder="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
         </LabelInputContainer>
-        <LabelInputContainer className="mb-4">
+        <LabelInputContainer className="mb-6">
           <Label htmlFor="password">Password</Label>
           <Input id="password" placeholder="••••••••" type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
           

@@ -22,11 +22,10 @@ const Profile: React.FC = () => {
   return (
     <>
       {status === 'authenticated' && session?.user ? (
-        <div className="relative h-screen w-full bg-neutral-950">
+        <div className="relative h-screen w-full bg-black">
           <Navbar/>
           <BackgroundBeamsDemo/>
         </div>
-        
       ) : (
         <div className="flex items-center justify-center min-h-screen relative z-10">
           <p className="text-xl text-gray-600">You need to be logged in to view this page.</p>
