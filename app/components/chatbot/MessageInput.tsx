@@ -27,7 +27,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
   }
 
   return (
-    <section className="flex justify-center text-white bg-black sticky bottom-0 z-50">
+    <section className="flex justify-center text-white bg-neutral-950 sticky bottom-0 z-50">
   <div className="relative w-full max-w-3xl mx-auto px-4 p-4">
     <div className="flex w-full items-center">
       <div className="relative flex w-full">

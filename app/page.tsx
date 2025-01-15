@@ -4,10 +4,15 @@ import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
+import { Label } from "./components/UI/label";
+import { Input } from "./components/UI/input";
+import { cn } from "@/utils";
+
 export default function SignIn() {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const router = useRouter()
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,55 +35,71 @@ export default function SignIn() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen p-4 bg-black text-white">
-      <div className="w-full max-w-md  border-gray-200 rounded-lg p-8 ">
-        <h1 className="text-3xl font-bold mb-8 text-center ">
-        Sign In
-        </h1>
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-sm font-semibold p-2 ">Email</label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="Enter your email address"
-                className="bg-zinc-900 w-full px-3 py-2 rounded-full hover:border-black focus:border-black "
-              />
-            </div>
+    <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-black dark:bg-black">
 
-            <div className="mb-4">
-              <label htmlFor="password" className="block text-sm font-semibold p-2">Password</label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="Enter your Password"
-                className="bg-zinc-900 w-full  px-3 py-2 rounded-full hover:border-black focus:border-black f"
-              />
-            </div>
+      <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
+        Welcome to Chat-XI
+      </h2>
+      <p className="text-neutral-600 text-sm max-w-sm mt-2 dark:text-neutral-300">
+        Login to Chat-XI if you can because we don&apos;t have a login flow
+        yet
+      </p>
 
-            <button
-              type="submit"
-              className="w-full bg-white text-black py-2 rounded-full mb-4 border-2 border-black"
-            >
-              Sign In
-            </button>
+          <form onSubmit={handleSubmit} className="my-8">
+          <LabelInputContainer className="mb-4">
+          <Label htmlFor="email">Email Address</Label>
+          <Input id="email" placeholder="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
+        </LabelInputContainer>
+        <LabelInputContainer className="mb-4">
+          <Label htmlFor="password">Password</Label>
+          <Input id="password" placeholder="••••••••" type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
+          
+        </LabelInputContainer>
+        
+        <button
+          className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+          type="submit"
+        >
+          Sign in &rarr;
+          <BottomGradient />
+        </button>
+            
           </form>
         <div className="text-center mt-4">
-          <span className="text-sm">Don&#39;t have an account?</span> {/* Escape the single quote */}
+          <span className="text-sm text-white">Don&#39;t have an account?</span> {/* Escape the single quote */}
           <button
             onClick={() => router.push('/signup')} // นำทางไปยังหน้า SignUp เมื่อคลิก
             className="ml-2 text-blue-600 font-semibold hover:underline"
           >
             Sign Up
+            
           </button>
         </div>
+        
       </div>
-    </div>
+
   )
 }
+
+const BottomGradient = () => {
+  return (
+    <>
+      <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
+      <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
+    </>
+  );
+};
+ 
+const LabelInputContainer = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div className={cn("flex flex-col space-y-2 w-full", className)}>
+      {children}
+    </div>
+  );
+};

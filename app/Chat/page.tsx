@@ -30,7 +30,7 @@ const HomePage: React.FC = () => {
   if (status === "authenticated" && session?.user) {
     return (
       <SessionProvider session={session}>
-        <div className={`flex h-screen bg-black transition-all duration-300`}>
+        <div className={`flex h-screen bg-neutral-950 transition-all duration-300`}>
           {/* Sidebar */}
           <div
             className={`bg-zinc-900 h-full transition-all duration-300 ${

@@ -1,9 +1,6 @@
-// next.config.js
-
-module.exports = {
-  images: {
-    domains: ['example.com'], // domain ของรูป
-  },
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
 };
 
+module.exports = nextConfig;
