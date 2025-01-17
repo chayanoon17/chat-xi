@@ -13,7 +13,7 @@
 1. **การติดตั้งและตั้งค่าโปรเจ็กต์**
    - คลิกรันคำสั่งเพื่อติดตั้งโปรเจ็กต์:
      ```bash
-     git clone https://github.com/your-repo-name.git
+     git clone https://github.com/chayanoon17/chat-xi
      cd your-repo-name
      npm install
      ```
