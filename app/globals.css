@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.dg {
+    border: 1px solid red;
+}
+/* ปรับแต่ง Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #424242; /* สีของ Scrollbar */
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #1a1a1a; /* สีพื้นหลังของ Scrollbar */
+  }
+  

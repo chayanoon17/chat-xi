@@ -5,6 +5,21 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
+declare module "next-auth" {
+  interface User {
+    id: string;
+  }
+
+  interface Session {
+    user: User;
+  }
+
+  interface JWT {
+    id: string;
+  }
+}
+
+
 const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
@@ -40,6 +55,7 @@ export const authOptions: NextAuthOptions = {
     maxAge: 24 * 60 * 60, // Set session expiration (24 hours)
   },
   callbacks: {
+
     jwt: async ({ token, user }) => {
       if (user) {
         token.id = user.id;

@@ -1,7 +1,7 @@
 // components/Navbar.tsx
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { FiMenu, FiX } from "react-icons/fi";
+import { signOut } from "next-auth/react";
 
 interface NavbarProps {
   onToggleSidebar: () => void; // เพิ่ม Prop สำหรับสั่งเปิด-ปิด Sidebar
@@ -11,7 +11,7 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isSidebarOpen }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
+
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -23,7 +23,6 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isSidebarOpen }) => {
      <button onClick={onToggleSidebar} className="p-2 hover:bg-zinc-700 rounded-md">
         {isSidebarOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
       </button>
-      <h1 className="text-sm font-medium">Next Js AI</h1>
       
       <div className="relative ml-2">
         <button
@@ -38,13 +37,14 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isSidebarOpen }) => {
         {isOpen && (
           <div className="absolute right-0 z-10 bg-black text-white rounded-lg shadow-lg mt-2 w-48">
             <ul className="py-2">
+             
               <li>
                 <a
                   href="#"
                   className="block px-4 py-2 text-sm hover:bg-gray-200"
-                  onClick={() => router.push('/profile')}
+                  onClick={() => signOut({ callbackUrl: "/" })}
                 >
-                  Home
+                  Logout
                 </a>
               </li>
               

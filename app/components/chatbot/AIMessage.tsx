@@ -62,7 +62,7 @@ const ChatGPTCodeBlock: React.FC<{
   const visibleLines = expanded ? lines : lines.slice(0, linesToShow)
 
   return (
-    <div className="my-4 rounded-md overflow-hidden rounded-xl">
+    <div className="my-4 rounded-md overflow-hidden ">
       <div className="flex items-center justify-between bg-[#2f3031] px-4 py-2">
         <span className="text-xs text-gray-300 font-medium">
           {title || language || 'Untitled'}

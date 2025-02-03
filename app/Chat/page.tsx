@@ -27,50 +27,40 @@ const HomePage: React.FC = () => {
     setIsSidebarOpen((prev) => !prev);
   };
 
-  if (status === "authenticated" && session?.user) {
+  if (status !== "authenticated") {
     return (
-      <SessionProvider session={session}>
-        <div className={`flex h-screen bg-neutral-950 transition-all duration-300`}>
-          {/* Sidebar */}
-          <div
-            className={`bg-zinc-900 h-full transition-all duration-300 ${
-              isSidebarOpen ? "w-64" : "w-0"
-            }`}
-          >
-            {isSidebarOpen && (
-              <Sidebar onSelectChatRoom={handleSelectChatRoom} />
-            )}
-          </div>
-
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <Navbar
-              onToggleSidebar={toggleSidebar}
-              isSidebarOpen={isSidebarOpen}
-            />
-            <div className=" overflow-y-auto p-0 md:p-6">
-              {selectedRoomId ? (
-                <Conversation chatRoomId={selectedRoomId} />
-              ) : (
-                <div className="flex text-white items-center justify-center h-full text-center">
-                  <div className="typewriter">
-                    Select a chat room to begin processing.
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </SessionProvider>
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-xl text-gray-600">
+          You need to be logged in to view this page.
+        </p>
+      </div>
     );
   }
 
   return (
-    <div className="flex items-center justify-center h-screen">
-      <p className="text-xl text-gray-600">
-        You need to be logged in to view this page.
-      </p>
-    </div>
+    <SessionProvider session={session}>
+      <div className="flex h-screen overflow-hidden bg-neutral-950">
+        {/* Sidebar */}
+        <div
+          className={`bg-zinc-900 h-full transition-all duration-300 ${
+            isSidebarOpen ? "w-64" : "w-0"
+          }`}
+        >
+          {isSidebarOpen && <Sidebar onSelectChatRoom={handleSelectChatRoom} />}
+        </div>
+
+        {/* Main Content */}
+        <div className="flex flex-col flex-1 h-full">
+          <Navbar onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
+          {/* Conversation Section */}
+          <div className="overflow-hidden">
+
+              <Conversation chatRoomId={selectedRoomId || ''} setSelectedRoomId={setSelectedRoomId} />
+            
+          </div>
+        </div>
+      </div>
+    </SessionProvider>
   );
 };
 

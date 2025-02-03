@@ -14,7 +14,7 @@ interface MessageListProps {
 }
 
 const MessageList: React.FC<MessageListProps> = ({ messages, error }) => (
-  <div className="space-y-4">
+  <div className="w-full ">
     {messages.map((msg, index) => (
       <div key={index}>
         {msg.question && <HumanMessage question={msg.question} />}
