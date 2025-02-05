@@ -20,6 +20,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, error }) => (
         {msg.question && <HumanMessage question={msg.question} />}
         {msg.answer && <AIMessage answer={msg.answer} isLoading={msg.isLoading} />}
       </div>
+      
     ))}
     {error && <div className="text-red-500">{error}</div>}
   </div>

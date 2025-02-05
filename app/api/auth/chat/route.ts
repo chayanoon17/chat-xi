@@ -1,3 +1,4 @@
+"use server"
 import { NextRequest, NextResponse } from 'next/server';
 import { getLLMStream } from '../../../../services/bedrock';
 import prisma from '../../../../lib/prisma';

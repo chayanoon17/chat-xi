@@ -41,19 +41,16 @@ export default function SignUp() {
 
   return (
     <>
-    <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
-    <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
-        Welcome to Chat-XI
-      </h2>
-      <p className="text-neutral-600 text-sm max-w-sm mt-2 dark:text-neutral-300">
-      Create an Account
-      </p>
- 
+    <div className="flex h-dvh w-full items-start pt-12 md:pt-0 md:items-center justify-center">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl flex flex-col gap-12">
+        <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
+          <h3 className="text-xl font-semibold text-zinc-50">Sign Up
+          </h3>
+          <p className="text-sm text-zinc-400">
+          Create an account with your email and password
+          </p>
+          <form onSubmit={handleSubmit} className="my-8 text-white">
 
-    <div className="">
-
-        <form onSubmit={handleSubmit} className="my-8">
-        <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
           <LabelInputContainer>
             <Label htmlFor="firstname">Fill name</Label>
             <Input id="name" placeholder="name" type="text" required value={name} onChange={(e) => setName(e.target.value)}/>
@@ -62,39 +59,39 @@ export default function SignUp() {
             <Label htmlFor="lastname">Email</Label>
             <Input id="email" placeholder="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)}/>
           </LabelInputContainer>
-        </div>
+
         <LabelInputContainer className="mb-4">
           <Label htmlFor="password">Password</Label>
           <Input id="password" placeholder="••••••••" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required/>
         </LabelInputContainer>
-
-
         <button
-          className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+          className="bg-white w-full py-2 rounded-md text-black font-semibold hover:bg-zinc-100 hover:text-white"
           type="submit"
         >
           Sign up &rarr;
           <BottomGradient />
         </button>
-        </form>
-
         <div className="mt-4 text-center">
           <button
             onClick={() => router.push('/')} // Redirect to the Sign In page when clicked
-            className="text-blue-600 font-semibold hover:underline"
+            className="text-zinc-50 font-semibold hover:underline"
           >
             Already have an account? Sign In
           </button>
-        </div>
-
-        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+          {error && <p className="text-red-500 text-center mt-4">{error}</p>}
         {success && (
           <p className="text-green-500 text-center mt-4">
             Account created successfully! Redirecting to Sign In...
           </p>
         )}
-      </div>
-    </div>
+        </div>
+        </form>
+        
+          </div>
+          </div>
+          </div>
+ 
+
     </>
   );
 }

@@ -17,7 +17,7 @@ const ChatGPTCodeBlock: React.FC<{
   inline?: boolean
   className?: string
   children?: React.ReactNode
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   node?: any
 }> = ({ inline, className, children, node }) => {
   const [copied, setCopied] = useState(false)
@@ -118,7 +118,7 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
   return (
     <div className="flex space-x-3 px-4 py-2">
       {/* ส่วนไอคอน AI (FaRobot) แทนรูป */}
-      <div className="w-10 h-10 bg-zinc-700 rounded-full flex items-center justify-center">
+      <div className="w-10 h-10 border border-gray-600 rounded-full flex items-center justify-center">
         <FaRobot className="text-white" size={20} />
       </div>
 

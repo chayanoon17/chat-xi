@@ -15,10 +15,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
   handleSendMessage,
 
 }) => {
-  
-  // ฟังก์ชันสำหรับตรวจจับปุ่ม Enter ใน textarea
-  // ถ้ากด Enter เฉย ๆ -> ส่งข้อความ
-  // ถ้ากด Shift + Enter -> ขึ้นบรรทัดใหม่ (ไม่ส่งข้อความ)
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault() // ป้องกันการขึ้นบรรทัดใหม่
@@ -32,8 +29,8 @@ const MessageInput: React.FC<MessageInputProps> = ({
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="พิมพ์ข้อความ (Enter เพื่อส่ง, Shift+Enter เพื่อขึ้นบรรทัดใหม่)..."
-          className="w-full items-center justify-center h-24 bg-zinc-900  text-white rounded-xl"  
+          placeholder="Send a message..."
+          className="w-full items-center justify-center h-28 border bg-zinc-800 text-lg  text-white rounded-xl"  
         />
       </>
   )
