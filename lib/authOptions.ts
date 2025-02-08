@@ -6,6 +6,23 @@ import bcrypt from "bcryptjs";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
 
+declare module "next-auth" {
+  interface User {
+    id: string;
+    name?: string | null;
+    email?: string | null;
+  }
+
+  interface Session {
+    user: User;
+  }
+
+  interface JWT {
+    id: string;
+  }
+}
+
+
 const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
