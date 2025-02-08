@@ -1,4 +1,4 @@
-"use server"
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getLLMStream } from '../../../../services/bedrock';
 import prisma from '../../../../lib/prisma';
@@ -23,13 +23,16 @@ export async function POST(req: NextRequest) {
       }, { status: 400 });
     }
 
+
     let chatRoomId = providedChatRoomId;
 
-    // ถ้ายังไม่มี chatRoomId ให้สร้างห้องใหม่
+
     if (!chatRoomId) {
+      console.log('Creating new chat room');
       const newChatRoom = await prisma.chatRoom.create({
         data: {
-          title: userMessage,
+          title: 
+            userMessage.length > 20 ? userMessage.slice(0, 20) + '...' : userMessage,
           createdAt: new Date(),
           userId,
         },
@@ -39,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     // บันทึกข้อความของผู้ใช้ลงในฐานข้อมูล
     await prisma.message.create({
-      data: {
+      data: { 
         chatRoomId,
         sender: 'user',
         content: userMessage,

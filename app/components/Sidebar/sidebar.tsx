@@ -1,156 +1,164 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { FiTrash2 } from 'react-icons/fi';
-
-declare module 'next-auth' {
-  interface User {
-    id: string;
-  }
-  interface Session {
-    user: User;
-  }
-}
+import { FiTrash2 } from "react-icons/fi";
+import { FiMoreHorizontal } from "react-icons/fi";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ChatRoom {
   id: string;
   title: string;
-  createdAt: string;
+  createdAt: string; // วันที่สร้างห้อง
 }
 
 interface SidebarProps {
   onSelectChatRoom: (roomId: string) => void;
   selectedRoomId: string | null;
-  setSelectedRoomId: (roomId: string) => void;  // เพิ่ม props นี้
 }
 
-
-const Sidebar: React.FC<SidebarProps> = ({ onSelectChatRoom, setSelectedRoomId }) => {
-  const { data: session, status } = useSession();
+const Sidebar: React.FC<SidebarProps> = ({ onSelectChatRoom, selectedRoomId }) => {
+  const { data: session } = useSession();
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
-  console.log('Current chatRooms:', chatRooms); // ใน Sidebar
+  const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchChatRooms = async () => {
-      const res = await fetch('/api/auth/chatrooms');
+  const fetchChatRooms = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/auth/chatrooms`);
       if (res.ok) {
         const data = await res.json();
-        sessionStorage.setItem('chatRooms', JSON.stringify(data));
         setChatRooms(data);
-      } else {
-        console.error('Failed to fetch chat rooms');
       }
-    };
-
-    if (status === 'authenticated') {
-      fetchChatRooms(); // ถ้าเข้าสู่ระบบแล้วให้ดึงห้องแชท
+    } catch (error) {
+      console.error("Failed to fetch chat rooms:", error);
+    } finally {
+      setLoading(false);
     }
-  }, [status, session?.user?.id]);
+  };
 
   useEffect(() => {
-    const storedChatRooms = sessionStorage.getItem('chatRooms');
-    if (storedChatRooms) {
-      const parsedRooms = JSON.parse(storedChatRooms);
-      setChatRooms(parsedRooms);  // อัปเดต chatRooms เมื่อมีการดึงข้อมูลจาก sessionStorage
-    }
-  }, []);  // useEffect นี้จะทำงานแค่ครั้งแรกเมื่อ component mount
+    fetchChatRooms();
+  }, [session, selectedRoomId]);
 
-  
-  
-
-  // ฟังก์ชันสำหรับการลบห้อง
   const handleDeleteRoom = async (roomId: string) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this room?");
-    if (!confirmDelete) return;
+    if (!window.confirm("Are you sure you want to delete this room?")) return;
+    
+    try {
+      const res = await fetch("/api/auth/chatrooms", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ roomId }),
+      });
 
-    const res = await fetch('/api/auth/chatrooms', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ roomId }),
-    });
-
-    if (res.ok) {
-      const updatedChatRooms = chatRooms.filter((room) => room.id !== roomId);
-      // อัปเดตข้อมูลใน LocalStorage และ State
-      localStorage.setItem('chatRooms', JSON.stringify(updatedChatRooms));
-      setChatRooms(updatedChatRooms);
-    } else {
-      console.error('Failed to delete room');
+      if (res.ok) {
+        setChatRooms((prev) => prev.filter((room) => room.id !== roomId));
+        fetchChatRooms();
+      } else {
+        console.error("Failed to delete room");
+      }
+    } catch (error) {
+      console.error("Error deleting room:", error);
     }
   };
 
-  const handleCreateRoomAutomatically = async () => {
-    const res = await fetch('/api/auth/chatrooms', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ title: 'New Chat Room' }),
+  // ✅ จัดกลุ่มห้องตามอายุของห้อง
+  const groupRoomsByDate = (rooms: ChatRoom[]) => {
+    const now = new Date();
+    const today: ChatRoom[] = [];
+    const yesterday: ChatRoom[] = [];
+    const last7Days: ChatRoom[] = [];
+    const last30Days: ChatRoom[] = [];
+    const older: ChatRoom[] = [];
+
+    rooms.forEach((room) => {
+      const createdDate = new Date(room.createdAt);
+      const timeDiff = now.getTime() - createdDate.getTime();
+      const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+
+      if (daysDiff === 0) {
+        today.push(room);
+      } else if (daysDiff === 1) {
+        yesterday.push(room);
+      } else if (daysDiff <= 7) {
+        last7Days.push(room);
+      } else if (daysDiff <= 30) {
+        last30Days.push(room);
+      } else {
+        older.push(room);
+      }
     });
-  
-    if (res.ok) {
-      const newRoom = await res.json();
-      const updatedChatRooms = [...chatRooms, newRoom];
-      setChatRooms(updatedChatRooms);
-      sessionStorage.setItem('chatRooms', JSON.stringify(updatedChatRooms));
-  
-      // ตั้งค่า selectedRoomId ให้เป็นห้องที่เพิ่งสร้าง
-      setSelectedRoomId(newRoom.id);  // อัปเดต selectedRoomId
-      sessionStorage.setItem('selectedRoomId', newRoom.id);  // เก็บค่าห้องที่เลือก
-    } else {
-      const errorData = await res.json();
-      alert(`Failed to create room: ${errorData.error || 'Unknown error'}`);
-    }
+
+    return { today, yesterday, last7Days, last30Days, older };
   };
-  
-  
-  
+
+  const { today, yesterday, last7Days, last30Days, older } = groupRoomsByDate(chatRooms);
+
   return (
-    <div className="w-full p-2 text-white flex flex-col items-start space-y-4 h-screen">
-      {/* Header Section */}
-      <div className="flex justify-between items-center w-full">
-        <p className="text-lg font-bold p-2">Chatbot</p>
-        {/* ปุ่ม "+" สำหรับขอห้องใหม่ */}
-        <button
-          className="ml-auto flex items-center justify-center p-2 text-white rounded-full shadow-md hover:bg-gray-600"
-          onClick={handleCreateRoomAutomatically} // เรียกฟังก์ชันเมื่อคลิก
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-        </button>
-      </div>
+    <div className="w-full p-2 text-white flex flex-col space-y-4 h-screen">
+      <p className="text-lg p-2 font-semibold">Chatbot</p>
 
-      {/* List of Chat Rooms */}
-      <nav className="flex flex-col space-y-4 w-full mt-4 overflow-y-auto">
-  {chatRooms.map((room) => (
-    <div
-      key={room.id}
-      className="flex items-center justify-between rounded-xl cursor-pointer text-white px-2 py-2 hover:bg-zinc-800"
-      onClick={() => onSelectChatRoom(room.id)}
-    >
-      <span>{room.title}</span>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          handleDeleteRoom(room.id);
-        }}
-        className="text-red-500 hover:text-red-700 ml-auto"
-      >
-        <FiTrash2 />
-      </button>
-    </div>
-  ))}
-</nav>
-
+      <nav className="flex flex-col w-full overflow-y-auto">
+        {loading ? (
+          <p className="text-zinc-500">Loading chat rooms...</p>
+        ) : chatRooms.length === 0 ? (
+          <p className="text-zinc-500">No chat rooms available</p>
+        ) : (
+          <>
+            {today.length > 0 && <ChatGroup title="Today" rooms={today} onSelectChatRoom={onSelectChatRoom} selectedRoomId={selectedRoomId} onDeleteRoom={handleDeleteRoom} />}
+            {yesterday.length > 0 && <ChatGroup title="Yesterday" rooms={yesterday} onSelectChatRoom={onSelectChatRoom} selectedRoomId={selectedRoomId} onDeleteRoom={handleDeleteRoom} />}
+            {last7Days.length > 0 && <ChatGroup title="Last 7 Days" rooms={last7Days} onSelectChatRoom={onSelectChatRoom} selectedRoomId={selectedRoomId} onDeleteRoom={handleDeleteRoom} />}
+            {last30Days.length > 0 && <ChatGroup title="Last 30 Days" rooms={last30Days} onSelectChatRoom={onSelectChatRoom} selectedRoomId={selectedRoomId} onDeleteRoom={handleDeleteRoom} />}
+            {older.length > 0 && <ChatGroup title="Older" rooms={older} onSelectChatRoom={onSelectChatRoom} selectedRoomId={selectedRoomId} onDeleteRoom={handleDeleteRoom} />}
+          </>
+        )}
+      </nav>
     </div>
   );
 };
+
+// ✅ Component สำหรับแสดงกลุ่มของห้องแชท
+const ChatGroup: React.FC<{ title: string; rooms: ChatRoom[]; selectedRoomId: string | null; onSelectChatRoom: (roomId: string) => void; onDeleteRoom: (roomId: string) => void }> = ({ title, rooms, selectedRoomId, onSelectChatRoom, onDeleteRoom }) => (
+  <div className="mb-4">
+    <p className="text-gray-400 text-xs uppercase mb-2">{title}</p>
+    {rooms.map((room) => (
+      <ChatRoomItem key={room.id} room={room} selectedRoomId={selectedRoomId} onSelectChatRoom={onSelectChatRoom} onDeleteRoom={onDeleteRoom} />
+    ))}
+  </div>
+);
+
+// ✅ Component สำหรับห้องแชทแต่ละอัน
+const ChatRoomItem: React.FC<{ room: ChatRoom; selectedRoomId: string | null; onSelectChatRoom: (roomId: string) => void; onDeleteRoom: (roomId: string) => void }> = ({ room, selectedRoomId, onSelectChatRoom, onDeleteRoom }) => (
+  <div
+    className={`flex items-center justify-between rounded-lg cursor-pointer text-white px-3 py-2 hover:bg-zinc-800 ${
+      room.id === selectedRoomId ? "bg-zinc-800" : ""
+    }`}
+    onClick={() => onSelectChatRoom(room.id)}
+  >
+    <p className="text-sm">{room.title}</p>
+
+    {/* ✅ ปุ่ม DropdownMenu */}
+    <DropdownMenu>
+      <DropdownMenuTrigger className="focus:outline-none">
+        <FiMoreHorizontal className="text-gray-400 hover:text-white" size={20} />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem
+          onClick={(e) => {
+            e.stopPropagation();
+            onDeleteRoom(room.id);
+          }}
+          className="text-red-500 hover:bg-red-950 rounded-md cursor-pointer"
+        >
+          <FiTrash2 size={20} className="text-red-500 hover:text-red-700" />
+          Delete
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  </div>
+);
 
 export default Sidebar;

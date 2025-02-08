@@ -1,4 +1,4 @@
- import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import MessageInput from "./MessageInput";
 import MessageList from "./MessageList";
 
@@ -11,6 +11,7 @@ interface Message {
 interface ConversationProps {
   chatRoomId: string | null;
   setSelectedRoomId: (roomId: string) => void;
+  refreshChatRooms: () => void;
 }
 
 interface MessageData {
@@ -18,16 +19,16 @@ interface MessageData {
   content: string;
 }
 
-const Conversation: React.FC<ConversationProps> = ({ chatRoomId, setSelectedRoomId }) => {
+const Conversation: React.FC<ConversationProps> = ({ chatRoomId, setSelectedRoomId, refreshChatRooms }) => {
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [error, setError] = useState<string | null>(null);
   const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchPreviousMessages = useCallback(async () => {
-    if (!chatRoomId) return; //  หยุดโหลดถ้าไม่มี chatRoomId
-
     try {
+      setLoading(true);
       const res = await fetch(`/api/auth/chat?chatRoomId=${chatRoomId}`);
       if (!res.ok) throw new Error("Failed to fetch previous messages");
 
@@ -42,6 +43,8 @@ const Conversation: React.FC<ConversationProps> = ({ chatRoomId, setSelectedRoom
     } catch (err) {
       console.error(err);
       setError("ไม่สามารถโหลดบทสนทนาเก่าได้");
+    } finally {
+      setLoading(false);
     }
   }, [chatRoomId]);
 
@@ -54,7 +57,6 @@ const Conversation: React.FC<ConversationProps> = ({ chatRoomId, setSelectedRoom
   const handleSendMessage = async () => {
     if (!message.trim()) return;
   
-    // เพิ่มข้อความของผู้ใช้ก่อน
     setMessages((prev) => [...prev, { question: message, answer: "", isLoading: true }]);
     setMessage("");
   
@@ -71,7 +73,8 @@ const Conversation: React.FC<ConversationProps> = ({ chatRoomId, setSelectedRoom
       if (!chatRoomId) {
         const newChatRoomId = res.headers.get("chatRoomId");
         if (newChatRoomId) {
-          setSelectedRoomId(newChatRoomId); // อัปเดต chatRoomId ใหม่
+          setSelectedRoomId(newChatRoomId); 
+          refreshChatRooms(); 
         }
       }
   
@@ -116,18 +119,18 @@ const Conversation: React.FC<ConversationProps> = ({ chatRoomId, setSelectedRoom
       endOfMessagesRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
-  
 
   return (
     <div className="flex flex-col h-full w-full mx-auto bg-neutral-950">
       <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-neutral-900">
         <div className="mx-auto max-w-3xl justify-center items-center">
+
           <MessageList messages={messages} error={error} />
           <div ref={endOfMessagesRef} />
         </div>
       </div>
 
-      <div className="flex mx-auto px-4 pb-4 md:pb-6 gap-2 w-full md:max-w-3xl ">
+      <div className="flex mx-auto px-4 p-4 pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
         <MessageInput
           message={message}
           setMessage={setMessage}

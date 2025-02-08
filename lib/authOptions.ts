@@ -5,20 +5,6 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
-declare module "next-auth" {
-  interface User {
-    id: string;
-  }
-
-  interface Session {
-    user: User;
-  }
-
-  interface JWT {
-    id: string;
-  }
-}
-
 
 const prisma = new PrismaClient();
 

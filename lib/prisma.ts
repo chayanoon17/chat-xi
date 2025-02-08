@@ -7,7 +7,7 @@ async function createChatRoom() {
   const session = await getSession(); // ดึงข้อมูล session
 
   if (!session) {
-    console.log("User is not logged in.");
+    console.log("I'm logging out.");
     return; // หากไม่มี session ก็ไม่ทำการสร้าง Chat Room
   }
 

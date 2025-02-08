@@ -32,7 +32,7 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isSidebarOpen }) => {
     <div className="ml-auto flex items-center">
       <button
         onClick={toggleDropdown}
-        className="w-24  text-white hover:text-white border border-zinc-800 hover:bg-zinc-800 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+        className="w-24  text-white hover:text-white border border-zinc-600 hover:bg-zinc-800 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
       >
         Logout
       </button>
