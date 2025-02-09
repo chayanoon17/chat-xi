@@ -30,6 +30,7 @@ const HomePage: React.FC = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
   };
+  
 
   const refreshChatRooms = async () => {
     try {
@@ -42,7 +43,6 @@ const HomePage: React.FC = () => {
       console.error("Failed to fetch chat rooms:", error);
     }
   };
-
   
 
   if (status !== "authenticated") {
@@ -66,7 +66,7 @@ const HomePage: React.FC = () => {
       >
         {isSidebarOpen && (
           <Sidebar
-            onSelectChatRoom={handleSelectChatRoom} selectedRoomId={selectedRoomId}/>
+            onSelectChatRoom={handleSelectChatRoom} selectedRoomId={selectedRoomId} />
         )}
       </div>
 

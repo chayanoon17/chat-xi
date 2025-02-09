@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { FiTrash2 } from "react-icons/fi";
+import { IoMdAdd } from "react-icons/io";
 import { FiMoreHorizontal } from "react-icons/fi";
 import {
   DropdownMenu,
@@ -8,11 +9,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton"; 
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Button } from "@/components/ui/button"
+
 
 interface ChatRoom {
   id: string;
   title: string;
-  createdAt: string; // วันที่สร้างห้อง
+  createdAt: string;
 }
 
 interface SidebarProps {
@@ -20,7 +25,10 @@ interface SidebarProps {
   selectedRoomId: string | null;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onSelectChatRoom, selectedRoomId }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  onSelectChatRoom,
+  selectedRoomId,
+}) => {
   const { data: session } = useSession();
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -42,11 +50,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelectChatRoom, selectedRoomId }) =
 
   useEffect(() => {
     fetchChatRooms();
-  }, [session, selectedRoomId]);
+  }, [selectedRoomId, session]);
 
   const handleDeleteRoom = async (roomId: string) => {
     if (!window.confirm("Are you sure you want to delete this room?")) return;
-    
+
     try {
       const res = await fetch("/api/auth/chatrooms", {
         method: "DELETE",
@@ -65,7 +73,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelectChatRoom, selectedRoomId }) =
     }
   };
 
-  // ✅ จัดกลุ่มห้องตามอายุของห้อง
   const groupRoomsByDate = (rooms: ChatRoom[]) => {
     const now = new Date();
     const today: ChatRoom[] = [];
@@ -95,43 +102,121 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelectChatRoom, selectedRoomId }) =
     return { today, yesterday, last7Days, last30Days, older };
   };
 
-  const { today, yesterday, last7Days, last30Days, older } = groupRoomsByDate(chatRooms);
+  const { today, yesterday, last7Days, last30Days, older } =
+    groupRoomsByDate(chatRooms);
 
   return (
-    <div className="w-full p-2 text-white flex flex-col space-y-4 h-screen">
-      <p className="text-lg p-2 font-semibold">Chatbot</p>
+    <div className="w-full  p-2 text-white flex flex-col space-y-4 h-screen">
+      <div className="flex justify-between">
+        <p className="text-lg p-2">Chatbot</p>
+        <button className="hover:bg-zinc-800 rounded-lg">
+          <IoMdAdd size={30} />
+        </button>
+      </div>
 
-      <nav className="flex flex-col w-full overflow-y-auto">
+      <ScrollArea>
+      <nav className="flex flex-col w-full overflow-y-auto ">
         {loading ? (
-          <p className="text-zinc-500">Loading chat rooms...</p>
+          <>
+            <Skeleton className="mb-6 h-4 w-[200px] bg-zinc-800" />
+            <Skeleton className="mb-6 h-4 w-[180px] bg-zinc-800" />
+            <Skeleton className="mb-6 h-4 w-[170px] bg-zinc-800" />
+            <Skeleton className="mb-6 h-4 w-[190px] bg-zinc-800" />
+            <Skeleton className="mb-6 h-4 w-[150px] bg-zinc-800" />
+            <Skeleton className="mb-6 h-4 w-[140px] bg-zinc-800" />
+          </>
         ) : chatRooms.length === 0 ? (
           <p className="text-zinc-500">No chat rooms available</p>
         ) : (
           <>
-            {today.length > 0 && <ChatGroup title="Today" rooms={today} onSelectChatRoom={onSelectChatRoom} selectedRoomId={selectedRoomId} onDeleteRoom={handleDeleteRoom} />}
-            {yesterday.length > 0 && <ChatGroup title="Yesterday" rooms={yesterday} onSelectChatRoom={onSelectChatRoom} selectedRoomId={selectedRoomId} onDeleteRoom={handleDeleteRoom} />}
-            {last7Days.length > 0 && <ChatGroup title="Last 7 Days" rooms={last7Days} onSelectChatRoom={onSelectChatRoom} selectedRoomId={selectedRoomId} onDeleteRoom={handleDeleteRoom} />}
-            {last30Days.length > 0 && <ChatGroup title="Last 30 Days" rooms={last30Days} onSelectChatRoom={onSelectChatRoom} selectedRoomId={selectedRoomId} onDeleteRoom={handleDeleteRoom} />}
-            {older.length > 0 && <ChatGroup title="Older" rooms={older} onSelectChatRoom={onSelectChatRoom} selectedRoomId={selectedRoomId} onDeleteRoom={handleDeleteRoom} />}
+            <div></div>
+            {today.length > 0 && (
+              <ChatGroup
+                title="Today"
+                rooms={today}
+                onSelectChatRoom={onSelectChatRoom}
+                selectedRoomId={selectedRoomId}
+                onDeleteRoom={handleDeleteRoom}
+              />
+            )}
+            {yesterday.length > 0 && (
+              <ChatGroup
+                title="Yesterday"
+                rooms={yesterday}
+                onSelectChatRoom={onSelectChatRoom}
+                selectedRoomId={selectedRoomId}
+                onDeleteRoom={handleDeleteRoom}
+              />
+            )}
+            {last7Days.length > 0 && (
+              <ChatGroup
+                title="Last 7 Days"
+                rooms={last7Days}
+                onSelectChatRoom={onSelectChatRoom}
+                selectedRoomId={selectedRoomId}
+                onDeleteRoom={handleDeleteRoom}
+              />
+            )}  
+            {last30Days.length > 0 && (
+              <ChatGroup
+                title="Last 30 Days"
+                rooms={last30Days}
+                onSelectChatRoom={onSelectChatRoom}
+                selectedRoomId={selectedRoomId}
+                onDeleteRoom={handleDeleteRoom}
+              />
+            )}  
+            {older.length > 0 && (
+              <ChatGroup
+                title="Older"
+                rooms={older}
+                onSelectChatRoom={onSelectChatRoom}
+                selectedRoomId={selectedRoomId}
+                onDeleteRoom={handleDeleteRoom}
+              />
+            )}
           </>
         )}
       </nav>
+      </ScrollArea>
+      <footer className="mt-auto">
+        <div>
+          
+        </div>
+      </footer>
+
     </div>
   );
 };
 
-// ✅ Component สำหรับแสดงกลุ่มของห้องแชท
-const ChatGroup: React.FC<{ title: string; rooms: ChatRoom[]; selectedRoomId: string | null; onSelectChatRoom: (roomId: string) => void; onDeleteRoom: (roomId: string) => void }> = ({ title, rooms, selectedRoomId, onSelectChatRoom, onDeleteRoom }) => (
+const ChatGroup: React.FC<{
+  title: string;
+  rooms: ChatRoom[];
+  selectedRoomId: string | null;
+  onSelectChatRoom: (roomId: string) => void;
+  onDeleteRoom: (roomId: string) => void;
+}> = ({ title, rooms, selectedRoomId, onSelectChatRoom, onDeleteRoom }) => (
   <div className="mb-4">
-    <p className="text-gray-400 text-xs uppercase mb-2">{title}</p>
+    <p className="text-gray-400 text-xs uppercase mb-2 px-2">{title}</p>
+
     {rooms.map((room) => (
-      <ChatRoomItem key={room.id} room={room} selectedRoomId={selectedRoomId} onSelectChatRoom={onSelectChatRoom} onDeleteRoom={onDeleteRoom} />
+      <ChatRoomItem
+        key={room.id}
+        room={room}
+        selectedRoomId={selectedRoomId}
+        onSelectChatRoom={onSelectChatRoom}
+        onDeleteRoom={onDeleteRoom}
+      />
     ))}
   </div>
 );
 
-// ✅ Component สำหรับห้องแชทแต่ละอัน
-const ChatRoomItem: React.FC<{ room: ChatRoom; selectedRoomId: string | null; onSelectChatRoom: (roomId: string) => void; onDeleteRoom: (roomId: string) => void }> = ({ room, selectedRoomId, onSelectChatRoom, onDeleteRoom }) => (
+const ChatRoomItem: React.FC<{
+  room: ChatRoom;
+  selectedRoomId: string | null;
+  onSelectChatRoom: (roomId: string) => void;
+  onDeleteRoom: (roomId: string) => void;
+}> = ({ room, selectedRoomId, onSelectChatRoom, onDeleteRoom }) => (
   <div
     className={`flex items-center justify-between rounded-lg cursor-pointer text-white px-3 py-2 hover:bg-zinc-800 ${
       room.id === selectedRoomId ? "bg-zinc-800" : ""
@@ -140,10 +225,12 @@ const ChatRoomItem: React.FC<{ room: ChatRoom; selectedRoomId: string | null; on
   >
     <p className="text-sm">{room.title}</p>
 
-    {/* ✅ ปุ่ม DropdownMenu */}
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none">
-        <FiMoreHorizontal className="text-gray-400 hover:text-white" size={20} />
+        <FiMoreHorizontal
+          className="text-gray-400 hover:text-white"
+          size={20}
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem

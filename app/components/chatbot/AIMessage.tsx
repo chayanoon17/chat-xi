@@ -105,6 +105,7 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
 
         {/* ข้อความของ AI */}
         <div className="px-4 py-2 rounded max-w-3xl w-full text-white">
+          
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{ code: ChatGPTCodeBlock }}
@@ -112,7 +113,7 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
             {answer}
           </ReactMarkdown>
           {isLoading && (
-            <div className="text-sm text-gray-400 mt-2">Loading...</div>
+            <div className="text-sm text-gray-400 mt-2">Thinking...</div>
           )}
         </div>
       </div>

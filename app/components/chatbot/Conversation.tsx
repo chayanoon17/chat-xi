@@ -48,12 +48,7 @@ const Conversation: React.FC<ConversationProps> = ({ chatRoomId, setSelectedRoom
     }
   }, [chatRoomId]);
 
-  useEffect(() => {
-    if (chatRoomId) {
-      fetchPreviousMessages();
-    }
-  }, [chatRoomId, fetchPreviousMessages]);
-
+  
   const handleSendMessage = async () => {
     if (!message.trim()) return;
   
@@ -113,6 +108,12 @@ const Conversation: React.FC<ConversationProps> = ({ chatRoomId, setSelectedRoom
     }
   };
   
+  useEffect(() => {
+    if (chatRoomId) {
+      fetchPreviousMessages();
+    }
+  }, [chatRoomId, fetchPreviousMessages]);
+
 
   useEffect(() => {
     if (endOfMessagesRef.current) {
@@ -120,12 +121,13 @@ const Conversation: React.FC<ConversationProps> = ({ chatRoomId, setSelectedRoom
     }
   }, [messages]);
 
+  
   return (
     <div className="flex flex-col h-full w-full mx-auto bg-neutral-950">
       <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-neutral-900">
         <div className="mx-auto max-w-3xl justify-center items-center">
-
           <MessageList messages={messages} error={error} />
+          
           <div ref={endOfMessagesRef} />
         </div>
       </div>
