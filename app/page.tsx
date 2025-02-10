@@ -50,11 +50,11 @@ export default function SignIn() {
           <form onSubmit={handleSubmit} className="my-4 text-white">
           <LabelInputContainer className="mb-6">
           <Label htmlFor="email">Email Address</Label>
-          <Input id="email" placeholder="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
+          <Input id="email" placeholder="user@acme.com" type="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
         </LabelInputContainer>
         <LabelInputContainer className="mb-6">
           <Label htmlFor="password">Password</Label>
-          <Input id="password" placeholder="••••••••" type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
+          <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
           
         </LabelInputContainer>
       

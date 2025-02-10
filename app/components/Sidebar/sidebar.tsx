@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { FiTrash2 } from "react-icons/fi";
 import { IoMdAdd } from "react-icons/io";
 import { FiMoreHorizontal } from "react-icons/fi";
@@ -10,9 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton"; 
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Button } from "@/components/ui/button"
-
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ChatRoom {
   id: string;
@@ -23,34 +20,24 @@ interface ChatRoom {
 interface SidebarProps {
   onSelectChatRoom: (roomId: string) => void;
   selectedRoomId: string | null;
+  setSelectedRoomId: (roomId: string) => void;
+  chatRooms: ChatRoom[];  // ส่ง chatRooms ไปที่ Sidebar
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
   onSelectChatRoom,
   selectedRoomId,
+  setSelectedRoomId,
+  chatRooms,
 }) => {
-  const { data: session } = useSession();
-  const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const fetchChatRooms = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/auth/chatrooms`);
-      if (res.ok) {
-        const data = await res.json();
-        setChatRooms(data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch chat rooms:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    fetchChatRooms();
-  }, [selectedRoomId, session]);
+    // ฟังการเปลี่ยนแปลงของ chatRooms และทำให้ Sidebar รีเฟรชเมื่อมีการอัปเดต
+    if (chatRooms.length > 0 && !selectedRoomId) {
+      setSelectedRoomId(chatRooms[chatRooms.length - 1].id);  // เลือกห้องสุดท้ายโดยอัตโนมัติ
+    }
+  }, [chatRooms, selectedRoomId, setSelectedRoomId]);
 
   const handleDeleteRoom = async (roomId: string) => {
     if (!window.confirm("Are you sure you want to delete this room?")) return;
@@ -63,8 +50,9 @@ const Sidebar: React.FC<SidebarProps> = ({
       });
 
       if (res.ok) {
-        setChatRooms((prev) => prev.filter((room) => room.id !== roomId));
-        fetchChatRooms();
+        // ลบห้องจาก chatRooms
+        setSelectedRoomId("");  // รีเซ็ทห้องที่เลือก
+        // ไม่จำเป็นต้องเรียก fetchChatRooms ใหม่เพราะเรากำลังจัดการด้วย state
       } else {
         console.error("Failed to delete room");
       }
@@ -102,8 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     return { today, yesterday, last7Days, last30Days, older };
   };
 
-  const { today, yesterday, last7Days, last30Days, older } =
-    groupRoomsByDate(chatRooms);
+  const { today, yesterday, last7Days, last30Days, older } = groupRoomsByDate(chatRooms);
 
   return (
     <div className="w-full  p-2 text-white flex flex-col space-y-4 h-screen">
@@ -115,76 +102,74 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       <ScrollArea>
-      <nav className="flex flex-col w-full overflow-y-auto ">
-        {loading ? (
-          <>
-            <Skeleton className="mb-6 h-4 w-[200px] bg-zinc-800" />
-            <Skeleton className="mb-6 h-4 w-[180px] bg-zinc-800" />
-            <Skeleton className="mb-6 h-4 w-[170px] bg-zinc-800" />
-            <Skeleton className="mb-6 h-4 w-[190px] bg-zinc-800" />
-            <Skeleton className="mb-6 h-4 w-[150px] bg-zinc-800" />
-            <Skeleton className="mb-6 h-4 w-[140px] bg-zinc-800" />
-          </>
-        ) : chatRooms.length === 0 ? (
-          <p className="text-zinc-500">No chat rooms available</p>
-        ) : (
-          <>
-            <div></div>
-            {today.length > 0 && (
-              <ChatGroup
-                title="Today"
-                rooms={today}
-                onSelectChatRoom={onSelectChatRoom}
-                selectedRoomId={selectedRoomId}
-                onDeleteRoom={handleDeleteRoom}
-              />
-            )}
-            {yesterday.length > 0 && (
-              <ChatGroup
-                title="Yesterday"
-                rooms={yesterday}
-                onSelectChatRoom={onSelectChatRoom}
-                selectedRoomId={selectedRoomId}
-                onDeleteRoom={handleDeleteRoom}
-              />
-            )}
-            {last7Days.length > 0 && (
-              <ChatGroup
-                title="Last 7 Days"
-                rooms={last7Days}
-                onSelectChatRoom={onSelectChatRoom}
-                selectedRoomId={selectedRoomId}
-                onDeleteRoom={handleDeleteRoom}
-              />
-            )}  
-            {last30Days.length > 0 && (
-              <ChatGroup
-                title="Last 30 Days"
-                rooms={last30Days}
-                onSelectChatRoom={onSelectChatRoom}
-                selectedRoomId={selectedRoomId}
-                onDeleteRoom={handleDeleteRoom}
-              />
-            )}  
-            {older.length > 0 && (
-              <ChatGroup
-                title="Older"
-                rooms={older}
-                onSelectChatRoom={onSelectChatRoom}
-                selectedRoomId={selectedRoomId}
-                onDeleteRoom={handleDeleteRoom}
-              />
-            )}
-          </>
-        )}
-      </nav>
+        <nav className="flex flex-col w-full overflow-y-auto ">
+          {loading ? (
+            <>
+              <Skeleton className="mb-6 h-4 w-[200px] bg-zinc-800" />
+              <Skeleton className="mb-6 h-4 w-[180px] bg-zinc-800" />
+              <Skeleton className="mb-6 h-4 w-[170px] bg-zinc-800" />
+              <Skeleton className="mb-6 h-4 w-[190px] bg-zinc-800" />
+              <Skeleton className="mb-6 h-4 w-[150px] bg-zinc-800" />
+              <Skeleton className="mb-6 h-4 w-[140px] bg-zinc-800" />
+            </>
+          ) : chatRooms.length === 0 ? (
+            <p className="text-zinc-500">No chat rooms available</p>
+          ) : (
+            <>
+              {today.length > 0 && (
+                <ChatGroup
+                  title="Today"
+                  rooms={today}
+                  onSelectChatRoom={onSelectChatRoom}
+                  selectedRoomId={selectedRoomId}
+                  onDeleteRoom={handleDeleteRoom}
+                />
+              )}
+              {yesterday.length > 0 && (
+                <ChatGroup
+                  title="Yesterday"
+                  rooms={yesterday}
+                  onSelectChatRoom={onSelectChatRoom}
+                  selectedRoomId={selectedRoomId}
+                  onDeleteRoom={handleDeleteRoom}
+                />
+              )}
+              {last7Days.length > 0 && (
+                <ChatGroup
+                  title="Last 7 Days"
+                  rooms={last7Days}
+                  onSelectChatRoom={onSelectChatRoom}
+                  selectedRoomId={selectedRoomId}
+                  onDeleteRoom={handleDeleteRoom}
+                />
+              )}
+              {last30Days.length > 0 && (
+                <ChatGroup
+                  title="Last 30 Days"
+                  rooms={last30Days}
+                  onSelectChatRoom={onSelectChatRoom}
+                  selectedRoomId={selectedRoomId}
+                  onDeleteRoom={handleDeleteRoom}
+                />
+              )}
+              {older.length > 0 && (
+                <ChatGroup
+                  title="Older"
+                  rooms={older}
+                  onSelectChatRoom={onSelectChatRoom}
+                  selectedRoomId={selectedRoomId}
+                  onDeleteRoom={handleDeleteRoom}
+                />
+              )}
+            </>
+          )}
+        </nav>
       </ScrollArea>
       <footer className="mt-auto">
         <div>
           
         </div>
       </footer>
-
     </div>
   );
 };
@@ -200,14 +185,15 @@ const ChatGroup: React.FC<{
     <p className="text-gray-400 text-xs uppercase mb-2 px-2">{title}</p>
 
     {rooms.map((room) => (
-      <ChatRoomItem
-        key={room.id}
-        room={room}
-        selectedRoomId={selectedRoomId}
-        onSelectChatRoom={onSelectChatRoom}
-        onDeleteRoom={onDeleteRoom}
-      />
-    ))}
+  <ChatRoomItem
+    key={`${room.id}-${room.createdAt}`}  // เพิ่ม createdAt เพื่อให้ key ไม่ซ้ำ
+    room={room}
+    selectedRoomId={selectedRoomId}
+    onSelectChatRoom={onSelectChatRoom}
+    onDeleteRoom={onDeleteRoom}
+  />
+))}
+
   </div>
 );
 
