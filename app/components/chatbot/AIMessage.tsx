@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -10,7 +12,7 @@ interface AIMessageProps {
   isLoading: boolean;
 }
 
-// 🔥 **ฟังก์ชันแสดงโค้ดใน Markdown**
+// ฟังก์ชันแสดงโค้ดใน Markdown
 const ChatGPTCodeBlock: React.FC<{
   inline?: boolean;
   className?: string;
@@ -24,12 +26,14 @@ const ChatGPTCodeBlock: React.FC<{
     setTimeout(() => setCopied(false), 1500);
   };
 
+  // ถ้าเป็น in-line code ไม่ต้องใช้ SyntaxHighlighter
   if (inline) {
     return (
       <code className="bg-gray-200 text-red-500 px-1 rounded">{children}</code>
     );
   }
 
+  // ถ้าเป็น code block หลายบรรทัด
   return (
     <div className="my-4 rounded-md overflow-hidden bg-zinc-900">
       <div className="flex items-center justify-between bg-zinc-800 px-4 py-2">
@@ -55,23 +59,26 @@ const ChatGPTCodeBlock: React.FC<{
   );
 };
 
-// 🔥 **ฟังก์ชันแสดงข้อความ AI**
+// ฟังก์ชันแสดงข้อความ AI
 const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
   const [copied, setCopied] = useState(false);
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
 
+  // Copy ทั้งข้อความของ AI
   const handleCopy = () => {
     navigator.clipboard.writeText(answer);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
 
+  // กด Like
   const handleLike = () => {
     setLiked(!liked);
     if (disliked) setDisliked(false);
   };
 
+  // กด Dislike
   const handleDislike = () => {
     setDisliked(!disliked);
     if (liked) setLiked(false);
@@ -79,8 +86,8 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
 
   return (
     <div className="flex flex-col space-x-3 px-4 py-2">
-      {/* AI Icon */}
       <div className="flex items-start space-x-3">
+        {/* AI Icon */}
         <div className="w-10 h-10 border rounded-full flex items-center justify-center">
           <svg
             strokeLinejoin="round"
@@ -103,22 +110,32 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
           </svg>
         </div>
 
-        {/* ข้อความของ AI */}
-        <div className="px-4 py-2 rounded max-w-3xl w-full text-white">
-          
+        {/* ส่วนข้อความ AI (Markdown) */}
+        <div className="prose prose-invert px-4 py-2 rounded max-w-3xl w-full">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            components={{ code: ChatGPTCodeBlock }}
+            components={{
+              code: ChatGPTCodeBlock,
+              // กำหนดคอมโพเนนต์สำหรับ ordered list ให้แสดงเลข
+              ol: ({ node, ...props }) => (
+                <ol className="list-decimal ml-5" {...props} />
+              ),
+              // ถ้าต้องการจัดรูปแบบรายการเพิ่มเติมสำหรับ li
+              li: ({ node, ...props }) => <li className="mb-4" {...props} />,
+            }}
           >
             {answer}
           </ReactMarkdown>
+
           {isLoading && (
-            <div className="text-sm text-gray-400 mt-2">Thinking...</div>
+            <div className="text-sm text-gray-400 mt-2 animate-pulse">
+              Thinking...
+            </div>
           )}
         </div>
       </div>
 
-
+      {/* ปุ่ม Copy / Like / Dislike */}
       <div className="flex space-x-2 mt-2 ml-20">
         <button
           className="p-2 border rounded-md hover:bg-zinc-700 transition"
@@ -131,6 +148,7 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
             size={16}
           />
         </button>
+
         <button
           className="p-2 border rounded-md hover:bg-zinc-700 transition"
           onClick={handleLike}
@@ -142,6 +160,7 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
             size={16}
           />
         </button>
+
         <button
           className="p-2 border rounded-md hover:bg-zinc-700 transition"
           onClick={handleDislike}

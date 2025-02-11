@@ -8,8 +8,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Skeleton } from "@/components/ui/skeleton"; 
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
+
+import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useSession } from "next-auth/react";
 
 interface ChatRoom {
   id: string;
@@ -21,7 +28,7 @@ interface SidebarProps {
   onSelectChatRoom: (roomId: string) => void;
   selectedRoomId: string | null;
   setSelectedRoomId: (roomId: string) => void;
-  chatRooms: ChatRoom[];  // ส่ง chatRooms ไปที่ Sidebar
+  chatRooms: ChatRoom[]; // ส่ง chatRooms ไปที่ Sidebar
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -31,11 +38,12 @@ const Sidebar: React.FC<SidebarProps> = ({
   chatRooms,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const {data: session} = useSession();
 
   useEffect(() => {
     // ฟังการเปลี่ยนแปลงของ chatRooms และทำให้ Sidebar รีเฟรชเมื่อมีการอัปเดต
     if (chatRooms.length > 0 && !selectedRoomId) {
-      setSelectedRoomId(chatRooms[chatRooms.length - 1].id);  // เลือกห้องสุดท้ายโดยอัตโนมัติ
+      setSelectedRoomId(chatRooms[chatRooms.length - 1].id); // เลือกห้องสุดท้ายโดยอัตโนมัติ
     }
   }, [chatRooms, selectedRoomId, setSelectedRoomId]);
 
@@ -51,7 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       if (res.ok) {
         // ลบห้องจาก chatRooms
-        setSelectedRoomId("");  // รีเซ็ทห้องที่เลือก
+        setSelectedRoomId(""); // รีเซ็ทห้องที่เลือก
         // ไม่จำเป็นต้องเรียก fetchChatRooms ใหม่เพราะเรากำลังจัดการด้วย state
       } else {
         console.error("Failed to delete room");
@@ -90,9 +98,14 @@ const Sidebar: React.FC<SidebarProps> = ({
     return { today, yesterday, last7Days, last30Days, older };
   };
 
-  const { today, yesterday, last7Days, last30Days, older } = groupRoomsByDate(chatRooms);
+  const { today, yesterday, last7Days, last30Days, older } =
+    groupRoomsByDate(chatRooms);
+
+
+    
 
   return (
+   
     <div className="w-full  p-2 text-white flex flex-col space-y-4 h-screen">
       <div className="flex justify-between">
         <p className="text-lg p-2">Chatbot</p>
@@ -101,7 +114,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </button>
       </div>
 
-      <ScrollArea>
+
         <nav className="flex flex-col w-full overflow-y-auto ">
           {loading ? (
             <>
@@ -113,7 +126,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               <Skeleton className="mb-6 h-4 w-[140px] bg-zinc-800" />
             </>
           ) : chatRooms.length === 0 ? (
-            <p className="text-zinc-500">No chat rooms available</p>
+            <p className="text-zinc-500 text-center">No chat rooms available</p>
           ) : (
             <>
               {today.length > 0 && (
@@ -164,13 +177,21 @@ const Sidebar: React.FC<SidebarProps> = ({
             </>
           )}
         </nav>
-      </ScrollArea>
-      <footer className="mt-auto">
-        <div>
-          
-        </div>
-      </footer>
+
+      <footer className="absolute bottom-3 flex justify-center w-60">
+  <div className="flex items-center space-x-2 p-3 bg-neutral-950 h-14 w-full rounded-lg">
+    <Avatar >
+      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn"/>
+      <AvatarFallback>CN</AvatarFallback>
+    </Avatar>
+    <div className="text-white">
+      {session?.user.email}
     </div>
+  </div>
+</footer>
+
+    </div>
+
   );
 };
 
@@ -185,15 +206,14 @@ const ChatGroup: React.FC<{
     <p className="text-gray-400 text-xs uppercase mb-2 px-2">{title}</p>
 
     {rooms.map((room) => (
-  <ChatRoomItem
-    key={`${room.id}-${room.createdAt}`}  // เพิ่ม createdAt เพื่อให้ key ไม่ซ้ำ
-    room={room}
-    selectedRoomId={selectedRoomId}
-    onSelectChatRoom={onSelectChatRoom}
-    onDeleteRoom={onDeleteRoom}
-  />
-))}
-
+      <ChatRoomItem
+        key={`${room.id}-${room.createdAt}`} // เพิ่ม createdAt เพื่อให้ key ไม่ซ้ำ
+        room={room}
+        selectedRoomId={selectedRoomId}
+        onSelectChatRoom={onSelectChatRoom}
+        onDeleteRoom={onDeleteRoom}
+      />
+    ))}
   </div>
 );
 

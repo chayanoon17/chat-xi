@@ -55,7 +55,7 @@ const HomePage: React.FC = () => {
     if (session?.user) {  // ถ้ามี session ใหม่ให้ดึงข้อมูล
       fetchChatRooms();
     }
-  }, [session]);  // ตรวจสอบเฉพาะเมื่อ session เปลี่ยนแปลง
+  }, [session, selectedRoomId]);  // ตรวจสอบเฉพาะเมื่อ session เปลี่ยนแปลง
   
 
   if (status !== "authenticated") {

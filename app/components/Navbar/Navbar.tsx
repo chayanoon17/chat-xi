@@ -29,7 +29,7 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isSidebarOpen }) => {
     </div>
 
     {/* ใช้ ml-auto เพื่อผลักปุ่ม Logout ไปทางขวา */}
-    <div className="ml-auto flex items-center">
+    <div className="ml-auto flex items-center px-4">
       <button
         onClick={toggleDropdown}
         className="w-24  text-white hover:text-white border border-zinc-600 hover:bg-zinc-800 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
