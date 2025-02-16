@@ -1,4 +1,4 @@
-
+// api/auth/chat/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getLLMStream } from '../../../../services/bedrock';
 import prisma from '../../../../lib/prisma';
@@ -108,9 +108,7 @@ export async function GET(req: NextRequest) {
     const messages = await prisma.message.findMany({
       where: { chatRoomId },
       orderBy: { createdAt: 'asc' },
-      select: { id: true, sender: true, content: true, createdAt: true },
-      skip: page * pageSize,
-      take: pageSize,
+
     });
 
     return NextResponse.json({ messages });

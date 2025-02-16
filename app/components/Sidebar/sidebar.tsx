@@ -29,6 +29,7 @@ interface SidebarProps {
   selectedRoomId: string | null;
   setSelectedRoomId: (roomId: string) => void;
   chatRooms: ChatRoom[]; // ส่ง chatRooms ไปที่ Sidebar
+  setChatRooms: (chatRooms: ChatRoom[]) => void; // ฟังก์ชันในการอัปเดต chatRooms
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -36,16 +37,18 @@ const Sidebar: React.FC<SidebarProps> = ({
   selectedRoomId,
   setSelectedRoomId,
   chatRooms,
+  setChatRooms,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const {data: session} = useSession();
 
   useEffect(() => {
-    // ฟังการเปลี่ยนแปลงของ chatRooms และทำให้ Sidebar รีเฟรชเมื่อมีการอัปเดต
-    if (chatRooms.length > 0 && !selectedRoomId) {
-      setSelectedRoomId(chatRooms[chatRooms.length - 1].id); // เลือกห้องสุดท้ายโดยอัตโนมัติ
-    }
-  }, [chatRooms, selectedRoomId, setSelectedRoomId]);
+  // ฟังการเปลี่ยนแปลงของ chatRooms และทำให้ Sidebar รีเฟรชเมื่อมีการอัปเดต
+  if (chatRooms.length > 0 && !selectedRoomId) {
+    setSelectedRoomId(chatRooms[0].id); // เลือกห้องแรกแทน
+  }
+}, [chatRooms, selectedRoomId, setSelectedRoomId]);
+
 
   const handleDeleteRoom = async (roomId: string) => {
     if (!window.confirm("Are you sure you want to delete this room?")) return;
@@ -102,6 +105,27 @@ const Sidebar: React.FC<SidebarProps> = ({
     groupRoomsByDate(chatRooms);
 
 
+    const handleCreateRoom = async () => {
+      const roomName = "New Chat"; // ตั้งชื่อห้องเป็น "New Chat" โดยอัตโนมัติ
+      
+      try {
+        // ส่งคำขอสร้างห้องใหม่ไปยัง API
+        const res = await fetch("/api/auth/chatrooms", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: roomName }),
+        });
+    
+        if (res.ok) {
+          const newRoom: ChatRoom = await res.json(); // รับข้อมูลห้องแชทใหม่จาก API
+          setSelectedRoomId(newRoom.id); // เลือกห้องใหม่ที่สร้างขึ้น
+        } else {
+          console.error("Failed to create room");
+        }
+      } catch (error) {
+        console.error("Error creating room:", error);
+      }
+    };
     
 
   return (
@@ -110,11 +134,10 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="flex justify-between">
         <p className="text-lg p-2">Chatbot</p>
         <button className="hover:bg-zinc-800 rounded-lg">
-          <IoMdAdd size={30} />
+          <IoMdAdd size={30} onClick={handleCreateRoom}/>
         </button>
       </div>
-
-
+      <ScrollArea>
         <nav className="flex flex-col w-full overflow-y-auto ">
           {loading ? (
             <>
@@ -177,10 +200,10 @@ const Sidebar: React.FC<SidebarProps> = ({
             </>
           )}
         </nav>
-
-      <footer className="absolute bottom-3 flex justify-center w-60">
-  <div className="flex items-center space-x-2 p-3 bg-neutral-950 h-14 w-full rounded-lg">
-    <Avatar >
+        </ScrollArea>
+      <div className="absolute bottom-3 flex justify-center w-60">
+  <div className="flex items-center space-x-2 p-3h-14 w-auto rounded-lg">
+    <Avatar>
       <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn"/>
       <AvatarFallback>CN</AvatarFallback>
     </Avatar>
@@ -188,7 +211,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       {session?.user.email}
     </div>
   </div>
-</footer>
+</div>
 
     </div>
 

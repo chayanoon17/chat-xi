@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import SessionProvider from "./components/SessionProvider";
 import "./globals.css";
 import { ThemeProvider } from "../lib/components/ui/theme-provider";
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata = {
   title: "ChatBot-XI",
@@ -25,6 +26,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           enableSystem
           disableTransitionOnChange
         >
+          <Analytics/>
           <SessionProvider session={session}>{children}</SessionProvider>
         </ThemeProvider>
       </body>

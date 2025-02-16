@@ -1,7 +1,6 @@
 import React from 'react';
-
 import { Textarea } from '../UI/textarea';
-
+import { IoIosSend } from "react-icons/io";
 interface MessageInputProps {
   message: string;
   setMessage: React.Dispatch<React.SetStateAction<string>>;
@@ -22,7 +21,6 @@ const MessageInput: React.FC<MessageInputProps> = ({
       handleSendMessage()
     }
   }
-
   return (
     <>
         <Textarea
@@ -30,8 +28,15 @@ const MessageInput: React.FC<MessageInputProps> = ({
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Send a message..."
-          className="w-full items-center justify-center h-28 border bg-zinc-800 text-lg  text-white rounded-xl"  
+          className="w-full items-center justify-center h-28 border bg-zinc-800 text-lg  rounded-xl"  
         />
+        <button
+        onClick={handleSendMessage}>
+          <IoIosSend
+          className=' rounded-full hover:bg-zinc-600'
+          size={30}
+          />
+        </button>
       </>
   )
 }

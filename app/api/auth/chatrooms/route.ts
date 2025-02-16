@@ -1,3 +1,4 @@
+// api/auth/chatrooms/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '../../../../lib/prisma'; // Prisma Client
 import { getServerSession } from 'next-auth';

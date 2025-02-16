@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import {  vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { FiCopy, FiThumbsUp, FiThumbsDown } from "react-icons/fi";
 
 interface AIMessageProps {
@@ -35,8 +35,8 @@ const ChatGPTCodeBlock: React.FC<{
 
   // ถ้าเป็น code block หลายบรรทัด
   return (
-    <div className="my-4 rounded-md overflow-hidden bg-zinc-900">
-      <div className="flex items-center justify-between bg-zinc-800 px-4 py-2">
+    <div className="my-4 rounded-md overflow-hidden bg-neutral-950 ">
+      <div className="flex items-center justify-between bg-neutral-950 px-4 py-2">
         <span className="text-xs text-gray-300 font-medium">
           {className?.replace("language-", "") || "Code"}
         </span>
