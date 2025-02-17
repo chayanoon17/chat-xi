@@ -39,8 +39,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   chatRooms,
   setChatRooms,
 }) => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading] = useState<boolean>(false);
   const {data: session} = useSession();
+  
 
   useEffect(() => {
   // ฟังการเปลี่ยนแปลงของ chatRooms และทำให้ Sidebar รีเฟรชเมื่อมีการอัปเดต
@@ -105,20 +106,17 @@ const Sidebar: React.FC<SidebarProps> = ({
     groupRoomsByDate(chatRooms);
 
 
-    const handleCreateRoom = async () => {
-      const roomName = "New Chat"; // ตั้งชื่อห้องเป็น "New Chat" โดยอัตโนมัติ
-      
+    const handleStartNewChat = async () => {
+      const roomName = "New Chat"; 
       try {
-        // ส่งคำขอสร้างห้องใหม่ไปยัง API
         const res = await fetch("/api/auth/chatrooms", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ title: roomName }),
         });
-    
         if (res.ok) {
-          const newRoom: ChatRoom = await res.json(); // รับข้อมูลห้องแชทใหม่จาก API
-          setSelectedRoomId(newRoom.id); // เลือกห้องใหม่ที่สร้างขึ้น
+          const newRoom: ChatRoom = await res.json(); 
+          setSelectedRoomId(newRoom.id); 
         } else {
           console.error("Failed to create room");
         }
@@ -126,7 +124,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         console.error("Error creating room:", error);
       }
     };
-    
 
   return (
    
@@ -134,7 +131,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="flex justify-between">
         <p className="text-lg p-2">Chatbot</p>
         <button className="hover:bg-zinc-800 rounded-lg">
-          <IoMdAdd size={30} onClick={handleCreateRoom}/>
+          <IoMdAdd size={30} onClick={handleStartNewChat}/>
         </button>
       </div>
       <ScrollArea>
@@ -201,7 +198,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           )}
         </nav>
         </ScrollArea>
-      <div className="absolute bottom-3 flex justify-center w-60">
+      <div className="absolute bottom-3 flex justify-between w-60">
   <div className="flex items-center space-x-2 p-3h-14 w-auto rounded-lg">
     <Avatar>
       <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn"/>

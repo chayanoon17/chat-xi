@@ -98,8 +98,6 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const chatRoomId = searchParams.get('chatRoomId');
-    const page = parseInt(searchParams.get('page') || '0', 10);
-    const pageSize = 20;
 
     if (!chatRoomId || typeof chatRoomId !== 'string') {
       return NextResponse.json({ error: 'chatRoomId is required' }, { status: 400 });
@@ -108,7 +106,6 @@ export async function GET(req: NextRequest) {
     const messages = await prisma.message.findMany({
       where: { chatRoomId },
       orderBy: { createdAt: 'asc' },
-
     });
 
     return NextResponse.json({ messages });

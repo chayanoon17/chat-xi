@@ -84,6 +84,7 @@ const HomePage: React.FC = () => {
                 selectedRoomId={selectedRoomId}
                 setSelectedRoomId={setSelectedRoomId}
                 chatRooms={chatRooms} // ส่ง chatRooms ไปที่ Sidebar
+                setChatRooms={setChatRooms}
               />
             )}
           </div>
