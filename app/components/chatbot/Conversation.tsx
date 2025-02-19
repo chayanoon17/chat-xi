@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import MessageInput from "./MessageInput";
 import MessageList from "./MessageList";
@@ -123,6 +124,7 @@ const Conversation: React.FC<ConversationProps> = ({
           return updated;
         });
       }
+      
     } catch (err) {
       console.error(err);
       setError("เกิดข้อผิดพลาดในการส่งข้อความ");

@@ -5,6 +5,7 @@ import prisma from '../../../../lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../../lib/authOptions';
 
+
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -98,14 +99,18 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const chatRoomId = searchParams.get('chatRoomId');
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const pageSize = 10; // ดึง 10 รายการต่อหน้า
 
-    if (!chatRoomId || typeof chatRoomId !== 'string') {
+    if (!chatRoomId) {
       return NextResponse.json({ error: 'chatRoomId is required' }, { status: 400 });
     }
 
     const messages = await prisma.message.findMany({
       where: { chatRoomId },
       orderBy: { createdAt: 'asc' },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
     });
 
     return NextResponse.json({ messages });
@@ -114,3 +119,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+

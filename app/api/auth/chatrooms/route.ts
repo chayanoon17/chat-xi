@@ -65,6 +65,8 @@ export async function GET() {
 
     const chatRooms = await prisma.chatRoom.findMany({
       where: { userId: userObjectId.toHexString() }, // ใช้ ObjectId เป็น string
+      select: { id: true, title: true, createdAt: true } // ดึงเฉพาะที่จำเป็น
+
     });
 
     return NextResponse.json(chatRooms, { status: 200 });

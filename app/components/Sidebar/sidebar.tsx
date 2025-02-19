@@ -1,35 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { FiTrash2 } from "react-icons/fi";
-import { IoMdAdd } from "react-icons/io";
-import { FiMoreHorizontal } from "react-icons/fi";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
-
-import { Skeleton } from "@/components/ui/skeleton";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useSession } from "next-auth/react";
-
-interface ChatRoom {
-  id: string;
-  title: string;
-  createdAt: string;
-}
+// Sidebar.tsx
+"use client";
+import React, { useState, useEffect } from 'react';
+import { IoMdAdd } from 'react-icons/io';
+import { useSession } from 'next-auth/react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
+import ChatGroup from '../ChatGroup/ChatGroup';
 
 interface SidebarProps {
   onSelectChatRoom: (roomId: string) => void;
   selectedRoomId: string | null;
   setSelectedRoomId: (roomId: string) => void;
-  chatRooms: ChatRoom[]; // ส่ง chatRooms ไปที่ Sidebar
-  setChatRooms: (chatRooms: ChatRoom[]) => void; // ฟังก์ชันในการอัปเดต chatRooms
+  chatRooms: { id: string; title: string; createdAt: string }[];
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -37,49 +20,45 @@ const Sidebar: React.FC<SidebarProps> = ({
   selectedRoomId,
   setSelectedRoomId,
   chatRooms,
-  setChatRooms,
 }) => {
   const [loading] = useState<boolean>(false);
-  const {data: session} = useSession();
-  
+  const { data: session } = useSession();
 
+  // ใช้ useEffect ในการดึงข้อมูล room ที่เลือกจาก localStorage
   useEffect(() => {
-  // ฟังการเปลี่ยนแปลงของ chatRooms และทำให้ Sidebar รีเฟรชเมื่อมีการอัปเดต
-  if (chatRooms.length > 0 && !selectedRoomId) {
-    setSelectedRoomId(chatRooms[0].id); // เลือกห้องแรกแทน
-  }
-}, [chatRooms, selectedRoomId, setSelectedRoomId]);
-
+    const savedRoomId = localStorage.getItem('selectedRoomId');
+    if (savedRoomId) {
+      setSelectedRoomId(savedRoomId);
+    }
+  }, [setSelectedRoomId]);
 
   const handleDeleteRoom = async (roomId: string) => {
-    if (!window.confirm("Are you sure you want to delete this room?")) return;
+    if (!window.confirm('Are you sure you want to delete this room?')) return;
 
     try {
-      const res = await fetch("/api/auth/chatrooms", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/auth/chatrooms', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ roomId }),
       });
 
       if (res.ok) {
-        // ลบห้องจาก chatRooms
-        setSelectedRoomId(""); // รีเซ็ทห้องที่เลือก
-        // ไม่จำเป็นต้องเรียก fetchChatRooms ใหม่เพราะเรากำลังจัดการด้วย state
+        setSelectedRoomId(''); // รีเซ็ทห้องที่เลือก
       } else {
-        console.error("Failed to delete room");
+        console.error('Failed to delete room');
       }
     } catch (error) {
-      console.error("Error deleting room:", error);
+      console.error('Error deleting room:', error);
     }
   };
 
-  const groupRoomsByDate = (rooms: ChatRoom[]) => {
+  const groupRoomsByDate = (rooms: { id: string; title: string; createdAt: string }[]) => {
     const now = new Date();
-    const today: ChatRoom[] = [];
-    const yesterday: ChatRoom[] = [];
-    const last7Days: ChatRoom[] = [];
-    const last30Days: ChatRoom[] = [];
-    const older: ChatRoom[] = [];
+    const today: any[] = [];
+    const yesterday: any[] = [];
+    const last7Days: any[] = [];
+    const last30Days: any[] = [];
+    const older: any[] = [];
 
     rooms.forEach((room) => {
       const createdDate = new Date(room.createdAt);
@@ -102,48 +81,32 @@ const Sidebar: React.FC<SidebarProps> = ({
     return { today, yesterday, last7Days, last30Days, older };
   };
 
-  const { today, yesterday, last7Days, last30Days, older } =
-    groupRoomsByDate(chatRooms);
+  const { today, yesterday, last7Days, last30Days, older } = groupRoomsByDate(chatRooms);
 
-
-    const handleStartNewChat = async () => {
-      const roomName = "New Chat"; 
-      try {
-        const res = await fetch("/api/auth/chatrooms", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title: roomName }),
-        });
-        if (res.ok) {
-          const newRoom: ChatRoom = await res.json(); 
-          setSelectedRoomId(newRoom.id); 
-        } else {
-          console.error("Failed to create room");
-        }
-      } catch (error) {
-        console.error("Error creating room:", error);
-      }
-    };
+  // ฟังก์ชันที่จะถูกเรียกเมื่อเลือกห้องใหม่
+  const handleSelectRoom = (roomId: string) => {
+    setSelectedRoomId(roomId);
+    localStorage.setItem('selectedRoomId', roomId);  // บันทึกห้องที่เลือกลง localStorage
+    onSelectChatRoom(roomId);
+  };
 
   return (
-   
-    <div className="w-full  p-2 text-white flex flex-col space-y-4 h-screen">
+    <div className="w-full p-2 text-white flex flex-col space-y-4 h-screen">
       <div className="flex justify-between">
         <p className="text-lg p-2">Chatbot</p>
-        <button className="hover:bg-zinc-800 rounded-lg">
-          <IoMdAdd size={30} onClick={handleStartNewChat}/>
+        <button
+          className=" rounded-lg"
+        >
+          <IoMdAdd size={20} />
         </button>
       </div>
+
       <ScrollArea>
-        <nav className="flex flex-col w-full overflow-y-auto ">
+        <nav className="flex flex-col w-full overflow-y-auto">
           {loading ? (
             <>
               <Skeleton className="mb-6 h-4 w-[200px] bg-zinc-800" />
               <Skeleton className="mb-6 h-4 w-[180px] bg-zinc-800" />
-              <Skeleton className="mb-6 h-4 w-[170px] bg-zinc-800" />
-              <Skeleton className="mb-6 h-4 w-[190px] bg-zinc-800" />
-              <Skeleton className="mb-6 h-4 w-[150px] bg-zinc-800" />
-              <Skeleton className="mb-6 h-4 w-[140px] bg-zinc-800" />
             </>
           ) : chatRooms.length === 0 ? (
             <p className="text-zinc-500 text-center">No chat rooms available</p>
@@ -153,7 +116,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <ChatGroup
                   title="Today"
                   rooms={today}
-                  onSelectChatRoom={onSelectChatRoom}
+                  onSelectChatRoom={handleSelectRoom}  // เปลี่ยนให้เรียกใช้ handleSelectRoom
                   selectedRoomId={selectedRoomId}
                   onDeleteRoom={handleDeleteRoom}
                 />
@@ -162,34 +125,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <ChatGroup
                   title="Yesterday"
                   rooms={yesterday}
-                  onSelectChatRoom={onSelectChatRoom}
-                  selectedRoomId={selectedRoomId}
-                  onDeleteRoom={handleDeleteRoom}
-                />
-              )}
-              {last7Days.length > 0 && (
-                <ChatGroup
-                  title="Last 7 Days"
-                  rooms={last7Days}
-                  onSelectChatRoom={onSelectChatRoom}
-                  selectedRoomId={selectedRoomId}
-                  onDeleteRoom={handleDeleteRoom}
-                />
-              )}
-              {last30Days.length > 0 && (
-                <ChatGroup
-                  title="Last 30 Days"
-                  rooms={last30Days}
-                  onSelectChatRoom={onSelectChatRoom}
-                  selectedRoomId={selectedRoomId}
-                  onDeleteRoom={handleDeleteRoom}
-                />
-              )}
-              {older.length > 0 && (
-                <ChatGroup
-                  title="Older"
-                  rooms={older}
-                  onSelectChatRoom={onSelectChatRoom}
+                  onSelectChatRoom={handleSelectRoom}  // เปลี่ยนให้เรียกใช้ handleSelectRoom
                   selectedRoomId={selectedRoomId}
                   onDeleteRoom={handleDeleteRoom}
                 />
@@ -197,81 +133,19 @@ const Sidebar: React.FC<SidebarProps> = ({
             </>
           )}
         </nav>
-        </ScrollArea>
+      </ScrollArea>
+
       <div className="absolute bottom-3 flex justify-between w-60">
-  <div className="flex items-center space-x-2 p-3h-14 w-auto rounded-lg">
-    <Avatar>
-      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn"/>
-      <AvatarFallback>CN</AvatarFallback>
-    </Avatar>
-    <div className="text-white">
-      {session?.user.email}
+        <div className="flex items-center space-x-2 p-3 w-auto rounded-lg">
+          <Avatar>
+            <AvatarImage src="https://github.com/nextauthjs.png" alt="avatar" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+          <p>{session?.user?.email}</p>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
-    </div>
-
   );
 };
-
-const ChatGroup: React.FC<{
-  title: string;
-  rooms: ChatRoom[];
-  selectedRoomId: string | null;
-  onSelectChatRoom: (roomId: string) => void;
-  onDeleteRoom: (roomId: string) => void;
-}> = ({ title, rooms, selectedRoomId, onSelectChatRoom, onDeleteRoom }) => (
-  <div className="mb-4">
-    <p className="text-gray-400 text-xs uppercase mb-2 px-2">{title}</p>
-
-    {rooms.map((room) => (
-      <ChatRoomItem
-        key={`${room.id}-${room.createdAt}`} // เพิ่ม createdAt เพื่อให้ key ไม่ซ้ำ
-        room={room}
-        selectedRoomId={selectedRoomId}
-        onSelectChatRoom={onSelectChatRoom}
-        onDeleteRoom={onDeleteRoom}
-      />
-    ))}
-  </div>
-);
-
-const ChatRoomItem: React.FC<{
-  room: ChatRoom;
-  selectedRoomId: string | null;
-  onSelectChatRoom: (roomId: string) => void;
-  onDeleteRoom: (roomId: string) => void;
-}> = ({ room, selectedRoomId, onSelectChatRoom, onDeleteRoom }) => (
-  <div
-    className={`flex items-center justify-between rounded-lg cursor-pointer text-white px-3 py-2 hover:bg-zinc-800 ${
-      room.id === selectedRoomId ? "bg-zinc-800" : ""
-    }`}
-    onClick={() => onSelectChatRoom(room.id)}
-  >
-    <p className="text-sm">{room.title}</p>
-
-    <DropdownMenu>
-      <DropdownMenuTrigger className="focus:outline-none">
-        <FiMoreHorizontal
-          className="text-gray-400 hover:text-white"
-          size={20}
-        />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          onClick={(e) => {
-            e.stopPropagation();
-            onDeleteRoom(room.id);
-          }}
-          className="text-red-500 hover:bg-red-950 rounded-md cursor-pointer"
-        >
-          <FiTrash2 size={20} className="text-red-500 hover:text-red-700" />
-          Delete
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  </div>
-);
 
 export default Sidebar;

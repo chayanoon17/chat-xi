@@ -18,7 +18,7 @@ const HomePage: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -30,6 +30,11 @@ const HomePage: React.FC = () => {
 
   const handleSelectChatRoom = (roomId: string) => {
     setSelectedRoomId(roomId);
+  };
+
+  const handleResetChat = () => {
+    setSelectedRoomId(null); // รีเซ็ตห้องที่เลือก
+    setChatRooms([]); // ลบห้องแชททั้งหมด
   };
 
   const toggleSidebar = () => {
@@ -51,12 +56,9 @@ const HomePage: React.FC = () => {
         setLoading(false);
       }
     };
-  
-    if (session?.user) {  // ถ้ามี session ใหม่ให้ดึงข้อมูล
-      fetchChatRooms();
-    }
-  }, [session, selectedRoomId]);  // ตรวจสอบเฉพาะเมื่อ session เปลี่ยนแปลง
-  
+
+    fetchChatRooms();
+  }, [selectedRoomId]);  
 
   if (status !== "authenticated") {
     return (
@@ -83,8 +85,7 @@ const HomePage: React.FC = () => {
                 onSelectChatRoom={handleSelectChatRoom}
                 selectedRoomId={selectedRoomId}
                 setSelectedRoomId={setSelectedRoomId}
-                chatRooms={chatRooms} // ส่ง chatRooms ไปที่ Sidebar
-                setChatRooms={setChatRooms}
+                chatRooms={chatRooms}
               />
             )}
           </div>
@@ -99,10 +100,18 @@ const HomePage: React.FC = () => {
               <Conversation
                 chatRoomId={selectedRoomId || ""}
                 setSelectedRoomId={setSelectedRoomId}
-                setChatRooms={setChatRooms} // ส่ง setChatRooms ไปที่ Conversation
+                setChatRooms={setChatRooms} 
               />
             </div>
           </div>
+
+          {/* Reset Chat Button */}
+          <button
+            onClick={handleResetChat}
+            className="absolute bottom-10 right-10 p-4 bg-blue-500 text-white rounded-full"
+          >
+            <span>+ New Chat</span>
+          </button>
         </div>
       </SessionProvider>
     </Suspense>
