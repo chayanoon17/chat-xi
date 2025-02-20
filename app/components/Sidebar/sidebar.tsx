@@ -13,6 +13,7 @@ interface SidebarProps {
   selectedRoomId: string | null;
   setSelectedRoomId: (roomId: string) => void;
   chatRooms: { id: string; title: string; createdAt: string }[];
+  session: any;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -20,9 +21,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   selectedRoomId,
   setSelectedRoomId,
   chatRooms,
+  session,
 }) => {
   const [loading] = useState<boolean>(false);
-  const { data: session } = useSession();
+
 
   // ใช้ useEffect ในการดึงข้อมูล room ที่เลือกจาก localStorage
   useEffect(() => {
@@ -84,20 +86,25 @@ const Sidebar: React.FC<SidebarProps> = ({
   const { today, yesterday, last7Days, last30Days, older } = groupRoomsByDate(chatRooms);
 
   // ฟังก์ชันที่จะถูกเรียกเมื่อเลือกห้องใหม่
+
   const handleSelectRoom = (roomId: string) => {
     setSelectedRoomId(roomId);
     localStorage.setItem('selectedRoomId', roomId);  // บันทึกห้องที่เลือกลง localStorage
     onSelectChatRoom(roomId);
   };
 
+  const handleResetChat = () => {
+    setSelectedRoomId(""); // รีเซ็ตห้องที่เลือก
+  };
+
   return (
-    <div className="w-full p-2 text-white flex flex-col space-y-4 h-screen">
+    <div className="w-full p-2 text-white flex flex-col space-y-4 h-screen font-light">
       <div className="flex justify-between">
         <p className="text-lg p-2">Chatbot</p>
         <button
           className=" rounded-lg"
         >
-          <IoMdAdd size={20} />
+          <IoMdAdd size={20} onClick={handleResetChat} />
         </button>
       </div>
 
@@ -133,15 +140,16 @@ const Sidebar: React.FC<SidebarProps> = ({
             </>
           )}
         </nav>
+        
       </ScrollArea>
 
-      <div className="absolute bottom-3 flex justify-between w-60">
-        <div className="flex items-center space-x-2 p-3 w-auto rounded-lg">
-          <Avatar>
-            <AvatarImage src="https://github.com/nextauthjs.png" alt="avatar" />
+      <div className="absolute bottom-3 flex justify-between bg-neutral-950 w-60 rounded-lg">
+        <div className="flex items-center space-x-2  ">
+          <Avatar className='h-8 w-8'>
+            <AvatarImage src="https://github.com/shadcn.png" alt="avatar" sizes='sm'/>
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <p>{session?.user?.email}</p>
+          <p>{session?.user?.email || "Guest"}</p> 
         </div>
       </div>
     </div>

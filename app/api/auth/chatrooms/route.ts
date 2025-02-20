@@ -56,9 +56,10 @@ export async function GET() {
     const userId = session.user.id;
 
     // ตรวจสอบว่า userId เป็น ObjectId ที่ถูกต้อง
-    if (!ObjectId.isValid(userId)) {
-      return NextResponse.json({ error: 'Invalid User ID' }, { status: 400 });
+    if (!userId) {
+      return NextResponse.json({ error: "Invalid User ID" }, { status: 400 });
     }
+    
 
     // แปลง userId เป็น ObjectId
     const userObjectId = new ObjectId(userId);

@@ -73,9 +73,12 @@ export async function POST(req: NextRequest) {
           return;
         }
 
+
         const chunk = Array.isArray(value?.content) ? value.content.join('') : value?.content ?? '';
         aiResponse += chunk;
         controller.enqueue(new TextEncoder().encode(chunk));
+
+        
       },
     });
 
@@ -99,7 +102,8 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const chatRoomId = searchParams.get('chatRoomId');
-    const page = parseInt(searchParams.get('page') || '1', 10);
+    const cursor = searchParams.get('cursor'); // ใช้ Cursor-based Pagination
+
     const pageSize = 10; // ดึง 10 รายการต่อหน้า
 
     if (!chatRoomId) {
@@ -109,8 +113,9 @@ export async function GET(req: NextRequest) {
     const messages = await prisma.message.findMany({
       where: { chatRoomId },
       orderBy: { createdAt: 'asc' },
-      skip: (page - 1) * pageSize,
       take: pageSize,
+      ...(cursor && { cursor: { id: cursor }, skip: 1 }) // ใช้ Cursor-based Pagination
+
     });
 
     return NextResponse.json({ messages });

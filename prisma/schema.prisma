@@ -32,5 +32,7 @@ model Message {
   createdAt  DateTime @default(now())
   chatRoomId String   @db.ObjectId // ระบุว่าฟิลด์นี้เป็น ObjectId
   chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id]) // เชื่อมต่อกับ ChatRoom
+    @@index([chatRoomId]) // **เพิ่ม Index เพื่อลดเวลา Query**
+
 }
 

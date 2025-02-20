@@ -1,7 +1,8 @@
-"use client"
+"use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import MessageInput from "./MessageInput";
 import MessageList from "./MessageList";
+import { motion } from "framer-motion";
 
 interface Message {
   question: string;
@@ -18,6 +19,8 @@ interface ChatRoom {
 interface ConversationProps {
   chatRoomId: string | null;
   setSelectedRoomId: (roomId: string) => void;
+  resetChat: () => void; // เพิ่ม resetChat props
+
   setChatRooms: React.Dispatch<React.SetStateAction<ChatRoom[]>>; // ส่ง setChatRooms ไปที่นี้
 }
 
@@ -36,6 +39,24 @@ const Conversation: React.FC<ConversationProps> = ({
   const [error, setError] = useState<string | null>(null);
   const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const suggestedPrompts = [
+    "What are the advantages of using Next.js?",
+    "Write code to demonstrate Dijkstra's algorithm",
+    "Help me write an essay about Silicon Valley",
+    "What is the weather in San Francisco?",
+  ];
+
+  const handleSuggestedPromptClick = (prompt: string) => {
+    setMessage(prompt); // ตั้งค่าข้อความใหม่
+    handleSendMessage(); // ส่งข้อความไปยังบอท
+  };
+
+  useEffect(() => {
+    if (!chatRoomId) {
+      setMessages([]); // ล้างบทสนทนาเมื่อออกจากห้องแชท
+    }
+  }, [chatRoomId]);
 
   const fetchPreviousMessages = useCallback(async () => {
     try {
@@ -124,7 +145,6 @@ const Conversation: React.FC<ConversationProps> = ({
           return updated;
         });
       }
-      
     } catch (err) {
       console.error(err);
       setError("เกิดข้อผิดพลาดในการส่งข้อความ");
@@ -147,17 +167,42 @@ const Conversation: React.FC<ConversationProps> = ({
     <div className="flex flex-col h-full w-full mx-auto bg-neutral-950">
       <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-neutral-900">
         <div className="mx-auto max-w-3xl justify-center items-center">
+        <motion.div
+      key={chatRoomId} // ใช้ key เพื่อให้ animation ทำงานเมื่อเปลี่ยนห้อง
+      initial={{ opacity: 0, y: 20 }} // เริ่มจากซ่อน
+      animate={{ opacity: 1, y: 0 }} // ค่อย ๆ แสดงขึ้นมา
+      exit={{ opacity: 0, y: -20 }} // ออกจากหน้าจอแบบเลื่อนขึ้น
+      transition={{ duration: 0.4, ease: "easeInOut" }} // ตั้งค่าความเร็ว
+      className="flex flex-col h-full w-full mx-auto bg-neutral-950"
+    >
           <MessageList messages={messages} error={error} />
           <div ref={endOfMessagesRef} />
+          </motion.div>
         </div>
       </div>
+
+      {!chatRoomId && (
+        <div className="lex mx-auto px-4 p-4 pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
+          
+          <div className="grid grid-cols-2 gap-4">
+            {suggestedPrompts.map((prompt, index) => (
+              <button
+                key={index}
+                onClick={() => handleSuggestedPromptClick(prompt)}
+                className="border px-4 py-2 rounded-lg text-sm hover:bg-zinc-700 transition h-20"
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="flex mx-auto px-4 p-4 pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
         <MessageInput
           message={message}
           setMessage={setMessage}
           handleSendMessage={handleSendMessage}
-          loading={messages[messages.length - 1]?.isLoading || false}
         />
       </div>
     </div>

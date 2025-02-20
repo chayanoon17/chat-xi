@@ -86,8 +86,11 @@ const HomePage: React.FC = () => {
                 selectedRoomId={selectedRoomId}
                 setSelectedRoomId={setSelectedRoomId}
                 chatRooms={chatRooms}
+                session={session}
               />
+              
             )}
+
           </div>
 
           {/* Main Content */}
@@ -101,17 +104,10 @@ const HomePage: React.FC = () => {
                 chatRoomId={selectedRoomId || ""}
                 setSelectedRoomId={setSelectedRoomId}
                 setChatRooms={setChatRooms} 
+                resetChat={handleResetChat}
               />
             </div>
           </div>
-
-          {/* Reset Chat Button */}
-          <button
-            onClick={handleResetChat}
-            className="absolute bottom-10 right-10 p-4 bg-blue-500 text-white rounded-full"
-          >
-            <span>+ New Chat</span>
-          </button>
         </div>
       </SessionProvider>
     </Suspense>
