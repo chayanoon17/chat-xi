@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import MessageInput from "./MessageInput";
 import MessageList from "./MessageList";
 import { motion } from "framer-motion";
+import { Suspense } from "react";
 
 interface Message {
   question: string;
@@ -164,48 +165,49 @@ const Conversation: React.FC<ConversationProps> = ({
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-full w-full mx-auto bg-neutral-950">
-      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-neutral-900">
-        <div className="mx-auto max-w-3xl justify-center items-center">
-        <motion.div
-            key={chatRoomId} // ใช้ key เพื่อให้ animation ทำงานเมื่อเปลี่ยนห้อง
-            initial={{ opacity: 0, y: 20 }} // เริ่มจากซ่อน
-            animate={{ opacity: 1, y: 0 }} // ค่อย ๆ แสดงขึ้นมา
-            exit={{ opacity: 0, y: -20 }} // ออกจากหน้าจอแบบเลื่อนขึ้น
-            transition={{ duration: 0.4, ease: "easeInOut" }} // ตั้งค่าความเร็ว
-            className="flex flex-col h-full w-full mx-auto bg-neutral-950"
-          >
-          <MessageList messages={messages} error={error} />
-          <div ref={endOfMessagesRef} />
-          </motion.div>
-        </div>
-      </div>
+    <Suspense fallback={<p>Loading...</p>}>
+      <motion.div
+        key={chatRoomId} // ใช้ key เพื่อให้ animation ทำงานเมื่อเปลี่ยนห้อง
+        initial={{ opacity: 0, y: 20 }} // เริ่มจากซ่อน
+        animate={{ opacity: 1, y: 0 }} // ค่อย ๆ แสดงขึ้นมา
+        exit={{ opacity: 0, y: -20 }} // ออกจากหน้าจอแบบเลื่อนขึ้น
+        transition={{ duration: 0.4, ease: "easeInOut" }} // ตั้งค่าความเร็ว
+        className="flex flex-col h-full w-full mx-auto bg-neutral-950"
+      >
+        <div className="flex flex-col h-full w-full mx-auto bg-neutral-950">
+          <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-neutral-900">
+            <div className="mx-auto max-w-3xl justify-center items-center">
+              <MessageList messages={messages} error={error} />
+              <div ref={endOfMessagesRef} />
+            </div>
+          </div>
 
-      {!chatRoomId && (
-        <div className="lex mx-auto px-4 p-4 pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
-          
-          <div className="grid grid-cols-2 gap-4">
-            {suggestedPrompts.map((prompt, index) => (
-              <button
-                key={index}
-                onClick={() => handleSuggestedPromptClick(prompt)}
-                className="border px-4 py-2 rounded-lg text-sm hover:bg-zinc-700 transition h-20"
-              >
-                {prompt}
-              </button>
-            ))}
+          {!chatRoomId && (
+            <div className="lex mx-auto px-4 p-4 pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
+              <div className="grid grid-cols-2 gap-4">
+                {suggestedPrompts.map((prompt, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSuggestedPromptClick(prompt)}
+                    className="border px-4 py-2 rounded-lg text-sm hover:bg-zinc-700 transition h-20"
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex mx-auto px-4 p-4 pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
+            <MessageInput
+              message={message}
+              setMessage={setMessage}
+              handleSendMessage={handleSendMessage}
+            />
           </div>
         </div>
-      )}
-
-      <div className="flex mx-auto px-4 p-4 pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
-        <MessageInput
-          message={message}
-          setMessage={setMessage}
-          handleSendMessage={handleSendMessage}
-        />
-      </div>
-    </div>
+      </motion.div>
+    </Suspense>
   );
 };
 
