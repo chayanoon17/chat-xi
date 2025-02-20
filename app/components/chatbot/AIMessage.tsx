@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -12,7 +11,6 @@ interface AIMessageProps {
   isLoading: boolean;
 }
 
-// ฟังก์ชันแสดงโค้ดใน Markdown
 const ChatGPTCodeBlock: React.FC<{
   inline?: boolean;
   className?: string;
@@ -26,16 +24,14 @@ const ChatGPTCodeBlock: React.FC<{
     setTimeout(() => setCopied(false), 1500);
   };
 
-  // ถ้าเป็น in-line code ไม่ต้องใช้ SyntaxHighlighter
   if (inline) {
     return (
       <code className="bg-gray-200 text-red-500 px-1 rounded">{children}</code>
     );
   }
 
-  // ถ้าเป็น code block หลายบรรทัด
   return (
-    <div className="my-4 rounded-md overflow-hidden bg-neutral-950 ">
+    <div className="my-4 rounded-md overflow-hidden bg-neutral-950">
       <div className="flex items-center justify-between bg-neutral-950 px-4 py-2">
         <span className="text-xs text-gray-300 font-medium">
           {className?.replace("language-", "") || "Code"}
@@ -47,7 +43,6 @@ const ChatGPTCodeBlock: React.FC<{
           {copied ? "Copied!" : "Copy"}
         </button>
       </div>
-
       <SyntaxHighlighter
         language={className?.replace("language-", "") || ""}
         style={vscDarkPlus}
@@ -59,35 +54,30 @@ const ChatGPTCodeBlock: React.FC<{
   );
 };
 
-// ฟังก์ชันแสดงข้อความ AI
 const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
   const [copied, setCopied] = useState(false);
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
 
-  // Copy ทั้งข้อความของ AI
   const handleCopy = () => {
     navigator.clipboard.writeText(answer);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
 
-  // กด Like
   const handleLike = () => {
     setLiked(!liked);
     if (disliked) setDisliked(false);
   };
 
-  // กด Dislike
   const handleDislike = () => {
     setDisliked(!disliked);
     if (liked) setLiked(false);
   };
 
   return (
-    <div className="flex flex-col space-x-3 px-4 py-2">
-      <div className="flex items-start space-x-3">
-        {/* AI Icon */}
+    <div className="flex flex-col px-4 py-2 space-y-3">
+      <div className="flex items-start space-x-2">
         <div className="w-10 h-10 border rounded-full flex items-center justify-center">
           <svg
             strokeLinejoin="round"
@@ -110,8 +100,7 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
           </svg>
         </div>
 
-        {/* ส่วนข้อความ AI (Markdown) */}
-        <div className="prose prose-invert px-4 py-2 rounded max-w-3xl w-full font-light ">
+        <div className="prose prose-invert px-4 py-2 rounded max-w-3xl w-full ">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
@@ -136,8 +125,7 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
         </div>
       </div>
 
-      {/* ปุ่ม Copy / Like / Dislike */}
-      <div className="flex space-x-2 mt-2 ml-20">
+      <div className="flex space-x-2 mt-2 justify-start">
         <button
           className="p-2 border rounded-md hover:bg-zinc-700 transition"
           onClick={handleCopy}

@@ -168,13 +168,13 @@ const Conversation: React.FC<ConversationProps> = ({
       <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-neutral-900">
         <div className="mx-auto max-w-3xl justify-center items-center">
         <motion.div
-      key={chatRoomId} // ใช้ key เพื่อให้ animation ทำงานเมื่อเปลี่ยนห้อง
-      initial={{ opacity: 0, y: 20 }} // เริ่มจากซ่อน
-      animate={{ opacity: 1, y: 0 }} // ค่อย ๆ แสดงขึ้นมา
-      exit={{ opacity: 0, y: -20 }} // ออกจากหน้าจอแบบเลื่อนขึ้น
-      transition={{ duration: 0.4, ease: "easeInOut" }} // ตั้งค่าความเร็ว
-      className="flex flex-col h-full w-full mx-auto bg-neutral-950"
-    >
+            key={chatRoomId} // ใช้ key เพื่อให้ animation ทำงานเมื่อเปลี่ยนห้อง
+            initial={{ opacity: 0, y: 20 }} // เริ่มจากซ่อน
+            animate={{ opacity: 1, y: 0 }} // ค่อย ๆ แสดงขึ้นมา
+            exit={{ opacity: 0, y: -20 }} // ออกจากหน้าจอแบบเลื่อนขึ้น
+            transition={{ duration: 0.4, ease: "easeInOut" }} // ตั้งค่าความเร็ว
+            className="flex flex-col h-full w-full mx-auto bg-neutral-950"
+          >
           <MessageList messages={messages} error={error} />
           <div ref={endOfMessagesRef} />
           </motion.div>

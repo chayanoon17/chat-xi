@@ -1,6 +1,8 @@
 # CHANGELOG
 
 ## จุดประสงค์ / วิธีการใช้งาน
+<a href="https://chat-xi-theta.vercel.app/">
+
 
 ### จุดประสงค์ของโปรเจ็กต์
 โปรเจ็กต์นี้เป็นระบบ **Chatbot** ที่พัฒนาด้วย **AWS Bedrock**, **Next.js**, และ **TypeScript** โดยมีวัตถุประสงค์หลักคือ:
@@ -58,4 +60,6 @@
 ### Initial Setup
 - Initial project setup using Create Next App. (Commit: 642be44)
 - First commits to project repository. (Commits: 825b77d, 49cb62b)
+
+
 
