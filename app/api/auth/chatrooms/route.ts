@@ -5,18 +5,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../../lib/authOptions'; 
 import { ObjectId } from 'mongodb'; // Import ObjectId
 
-export const config = { runtime: "edge" }; // ✅ ใช้ Edge Function
-
-export default async function handler(req: Request) {
-  const chatRooms = await prisma.chatRoom.findMany({
-    where: { userId: "USER_ID" },
-    select: { id: true, title: true, createdAt: true },
-  });
-
-  return new Response(JSON.stringify(chatRooms), {
-    headers: { "Content-Type": "application/json" },
-  });
-}
 
 
 export async function POST(req: NextRequest) {
