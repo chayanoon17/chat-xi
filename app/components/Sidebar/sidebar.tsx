@@ -11,12 +11,15 @@ interface SidebarProps {
   selectedRoomId: string | null;
   setSelectedRoomId: (roomId: string) => void;
   chatRooms: { id: string; title: string; createdAt: string }[];
+  setChatRooms: React.Dispatch<React.SetStateAction<{ id: string; title: string; createdAt: string }[]>>; // ✅ เพิ่มบรรทัดนี้
 }
+
 
 const Sidebar: React.FC<SidebarProps> = ({
   selectedRoomId,
   setSelectedRoomId,
   chatRooms,
+  setChatRooms, 
 }) => {
   const { data: session, status } = useSession();
   const [userEmail, setUserEmail] = useState<string>("");
@@ -33,6 +36,29 @@ const Sidebar: React.FC<SidebarProps> = ({
   const handleResetChat = () => {
     setSelectedRoomId("");
   };
+
+  const handleDeleteRoom = async (roomId: string) => {
+    if (!window.confirm('Are you sure you want to delete this room?')) return;
+
+    try {
+      const res = await fetch('/api/auth/chatrooms', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roomId }),
+      });
+
+      if (res.ok) {
+        setSelectedRoomId(''); // รีเซ็ทห้องที่เลือก
+      } else {
+        console.error('Failed to delete room');
+      }
+    } catch (error) {
+      console.error('Error deleting room:', error);
+    }
+  };
+  
+  
+  
 
   return (
     <div className="w-full p-2 text-white flex flex-col space-y-4 h-screen font-light">
@@ -60,7 +86,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 rooms={[room]}
                 onSelectChatRoom={setSelectedRoomId}
                 selectedRoomId={selectedRoomId}
-                onDeleteRoom={() => console.log("Delete Room", room.id)}
+                onDeleteRoom={handleDeleteRoom} // ใช้ฟังก์ชันที่เราเพิ่มเข้ามา
               />
             ))
           )}

@@ -82,45 +82,39 @@ export async function DELETE(req: NextRequest) {
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user || !session.user.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { roomId } = await req.json();
 
     if (!roomId) {
-      return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
 
-    const userId = session.user.id;
-
-    // ตรวจสอบว่า userId และ roomId เป็น ObjectId ที่ถูกต้อง
-    if (!ObjectId.isValid(userId) || !ObjectId.isValid(roomId)) {
-      return NextResponse.json({ error: 'Invalid User or Room ID' }, { status: 400 });
+    if (!ObjectId.isValid(roomId)) {
+      return NextResponse.json({ error: "Invalid Room ID" }, { status: 400 });
     }
-
-    // แปลง userId และ roomId เป็น ObjectId
-    const userObjectId = new ObjectId(userId);
-    const roomObjectId = new ObjectId(roomId);
 
     const chatRoom = await prisma.chatRoom.findUnique({
-      where: { id: roomObjectId.toHexString() }, // ใช้ ObjectId เป็น string
+      where: { id: roomId },
     });
 
-    if (!chatRoom || chatRoom.userId !== userObjectId.toHexString()) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (!chatRoom || chatRoom.userId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     await prisma.message.deleteMany({
-      where: { chatRoomId: roomObjectId.toHexString() }, // ใช้ ObjectId เป็น string
+      where: { chatRoomId: roomId },
     });
 
     await prisma.chatRoom.delete({
-      where: { id: roomObjectId.toHexString() }, // ใช้ ObjectId เป็น string
+      where: { id: roomId },
     });
 
-    return NextResponse.json({ message: 'Room and related messages deleted' }, { status: 200 });
+    return NextResponse.json({ message: "Room and related messages deleted" }, { status: 200 }); // ✅ แก้ให้ส่ง JSON เสมอ
   } catch (error) {
-    console.error('Error deleting chat room:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("Error deleting chat room:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+

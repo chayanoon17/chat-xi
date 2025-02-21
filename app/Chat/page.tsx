@@ -56,9 +56,10 @@ const HomePage: React.FC = () => {
         setLoading(false);
       }
     };
-
+  
     fetchChatRooms();
-  }, [selectedRoomId]);  
+  }, []); // ✅ โหลดแค่ครั้งเดียวตอนแรก
+  
 
   if (status !== "authenticated") {
     return (
@@ -86,6 +87,7 @@ const HomePage: React.FC = () => {
             selectedRoomId={selectedRoomId}
             setSelectedRoomId={setSelectedRoomId}
             chatRooms={chatRooms}
+            setChatRooms={setChatRooms}
           />
         )}
       </div>

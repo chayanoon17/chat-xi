@@ -60,19 +60,19 @@ const Conversation: React.FC<ConversationProps> = ({
   }, [chatRoomId]);
 
   const fetchPreviousMessages = useCallback(async () => {
+    if (!chatRoomId) return; // ✅ ป้องกันการโหลดเมื่อไม่มีห้อง
+  
     try {
       setLoading(true);
       const res = await fetch(`/api/auth/chat?chatRoomId=${chatRoomId}`);
       if (!res.ok) throw new Error("Failed to fetch previous messages");
-
+  
       const data = await res.json();
-      const formattedMessages = data.messages.map((msg: MessageData) => ({
+      setMessages(data.messages.map((msg: MessageData) => ({
         question: msg.sender === "user" ? msg.content : "",
         answer: msg.sender === "ai" ? msg.content : "",
         isLoading: false,
-      }));
-
-      setMessages(formattedMessages);
+      })));
     } catch (err) {
       console.error(err);
       setError("ไม่สามารถโหลดบทสนทนาเก่าได้");
@@ -80,6 +80,7 @@ const Conversation: React.FC<ConversationProps> = ({
       setLoading(false);
     }
   }, [chatRoomId]);
+  
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
@@ -153,6 +154,7 @@ const Conversation: React.FC<ConversationProps> = ({
   };
 
   useEffect(() => {
+    setMessages([]); 
     if (chatRoomId) {
       fetchPreviousMessages();
     }
