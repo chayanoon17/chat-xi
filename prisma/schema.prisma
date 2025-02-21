@@ -23,6 +23,8 @@ model ChatRoom {
   userId    String   @db.ObjectId 
   user      User     @relation(fields: [userId], references: [id]) // เชื่อมต่อกับ User
   messages  Message[] // One-to-many: ห้องแชทมีข้อความหลายข้อความ
+    @@index([userId]) // ✅ เพิ่ม Index ให้ค้นหา ChatRooms ตาม userId ได้เร็วขึ้น
+
 }
 
 model Message {

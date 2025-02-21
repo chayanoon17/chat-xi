@@ -56,10 +56,9 @@ const HomePage: React.FC = () => {
         setLoading(false);
       }
     };
-  
+
     fetchChatRooms();
-  }, []); // ✅ โหลดแค่ครั้งเดียวตอนแรก
-  
+  }, []); // โหลดแค่ครั้งเดียวตอนแรก
 
   if (status !== "authenticated") {
     return (
@@ -73,53 +72,52 @@ const HomePage: React.FC = () => {
 
   return (
     <Suspense fallback={<p>Loading...</p>}>
-  <SessionProvider>
-    <div className="flex h-screen overflow-hidden">
-      {/* Sidebar (Overlay) */}
-      <div
-        className={`fixed inset-y-0 left-0 z-50 bg-zinc-900 h-full transition-all duration-300 ${
-          isSidebarOpen ? "w-64 shadow-lg" : "w-0"
-        }`}
-      >
-        {isSidebarOpen && (
-          <Sidebar
-            onSelectChatRoom={handleSelectChatRoom}
-            selectedRoomId={selectedRoomId}
-            setSelectedRoomId={setSelectedRoomId}
-            chatRooms={chatRooms}
-            setChatRooms={setChatRooms}
-          />
-        )}
-      </div>
+      <SessionProvider>
+        <div className="flex h-screen overflow-hidden">
+          {/* Sidebar (Overlay) */}
+          <div
+            className={`fixed inset-y-0 left-0 z-50 bg-zinc-900 h-full transition-all duration-300 ${
+              isSidebarOpen ? "w-64 shadow-lg" : "w-0"
+            }`}
+          >
+            {isSidebarOpen && (
+              <Sidebar
+                onSelectChatRoom={handleSelectChatRoom}
+                selectedRoomId={selectedRoomId}
+                setSelectedRoomId={setSelectedRoomId}
+                chatRooms={chatRooms}
+                setChatRooms={setChatRooms}
+              />
+            )}
+          </div>
 
-      {/* Overlay Background (ปิด Sidebar เมื่อคลิกที่พื้นหลัง) */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40"
-          onClick={toggleSidebar} // คลิกที่พื้นหลังเพื่อปิด Sidebar
-        />
-      )}
+          {/* Overlay Background (ปิด Sidebar เมื่อคลิกที่พื้นหลัง) */}
+          {isSidebarOpen && (
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 z-40"
+              onClick={toggleSidebar} // คลิกที่พื้นหลังเพื่อปิด Sidebar
+            />
+          )}
 
-      {/* Main Content */}
-      <div className="flex flex-col flex-1">
-        <Navbar onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
-        <div className="flex-1 overflow-y-auto">
-          <Conversation
-            chatRoomId={selectedRoomId || ""}
-            setSelectedRoomId={setSelectedRoomId}
-            setChatRooms={setChatRooms}
-            resetChat={handleResetChat}
-          />
+          {/* Main Content */}
+          <div className="flex flex-col flex-1">
+            <Navbar
+              onToggleSidebar={toggleSidebar}
+              isSidebarOpen={isSidebarOpen}
+            />
+            <div className="flex-1 overflow-y-auto">
+              <Conversation
+                chatRoomId={selectedRoomId || ""}
+                setSelectedRoomId={setSelectedRoomId}
+                setChatRooms={setChatRooms}
+                resetChat={handleResetChat}
+              />
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </SessionProvider>
-</Suspense>
-
+      </SessionProvider>
+    </Suspense>
   );
 };
 
 export default HomePage;
-
-
-

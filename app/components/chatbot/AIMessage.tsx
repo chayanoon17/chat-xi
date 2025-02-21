@@ -101,6 +101,11 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
         </div>
 
         <div className="prose prose-invert px-4 py-2 rounded max-w-3xl w-full ">
+        {isLoading && (
+            <div className="text-sm text-gray-400 mt-2 animate-pulse">
+              Thinking...
+            </div>
+          )}
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
@@ -114,14 +119,11 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
               li: ({ node, ...props }) => <li className="mb-4" {...props} />,
             }}
           >
+            
             {answer}
+            
           </ReactMarkdown>
-
-          {isLoading && (
-            <div className="text-sm text-gray-400 mt-2 animate-pulse">
-              Thinking...
-            </div>
-          )}
+          
         </div>
       </div>
 

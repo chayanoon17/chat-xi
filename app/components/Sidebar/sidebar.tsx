@@ -11,7 +11,7 @@ interface SidebarProps {
   selectedRoomId: string | null;
   setSelectedRoomId: (roomId: string) => void;
   chatRooms: { id: string; title: string; createdAt: string }[];
-  setChatRooms: React.Dispatch<React.SetStateAction<{ id: string; title: string; createdAt: string }[]>>; // ✅ เพิ่มบรรทัดนี้
+  setChatRooms: React.Dispatch<React.SetStateAction<{ id: string; title: string; createdAt: string }[]>>; 
 }
 
 
@@ -72,6 +72,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           <IoMdAdd size={20} />
         </button>
       </div>
+      
 
       {/* Chat List */}
       <ScrollArea>

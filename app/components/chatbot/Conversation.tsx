@@ -62,6 +62,7 @@ const Conversation: React.FC<ConversationProps> = ({
   const fetchPreviousMessages = useCallback(async () => {
     if (!chatRoomId) return; // ✅ ป้องกันการโหลดเมื่อไม่มีห้อง
   
+    setLoading(true);
     try {
       setLoading(true);
       const res = await fetch(`/api/auth/chat?chatRoomId=${chatRoomId}`);
@@ -73,6 +74,7 @@ const Conversation: React.FC<ConversationProps> = ({
         answer: msg.sender === "ai" ? msg.content : "",
         isLoading: false,
       })));
+      setLoading(false)
     } catch (err) {
       console.error(err);
       setError("ไม่สามารถโหลดบทสนทนาเก่าได้");
@@ -85,11 +87,13 @@ const Conversation: React.FC<ConversationProps> = ({
   const handleSendMessage = async () => {
     if (!message.trim()) return;
 
+
     setMessages((prev: Message[]) => [
       ...prev,
       { question: message, answer: "", isLoading: true },
     ]);
     setMessage("");
+
 
     try {
       const res = await fetch("/api/auth/chat", {
@@ -99,6 +103,7 @@ const Conversation: React.FC<ConversationProps> = ({
       });
 
       if (!res.ok) throw new Error("Failed to fetch AI response");
+
 
       if (!chatRoomId) {
         const newChatRoomId = res.headers.get("chatRoomId");
@@ -137,6 +142,7 @@ const Conversation: React.FC<ConversationProps> = ({
             });
           }
         }
+
 
         setMessages((prev: Message[]) => {
           const updated = [...prev];
