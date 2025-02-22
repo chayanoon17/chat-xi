@@ -58,7 +58,7 @@ const HomePage: React.FC = () => {
     };
 
     fetchChatRooms();
-  }, []); // โหลดแค่ครั้งเดียวตอนแรก
+  }, [selectedRoomId]);
 
   if (status !== "authenticated") {
     return (
@@ -73,7 +73,7 @@ const HomePage: React.FC = () => {
   return (
     <Suspense fallback={<p>Loading...</p>}>
       <SessionProvider>
-        <div className="flex h-screen overflow-hidden">
+        <div className="flex h-screen overflow-hidden relative">
           {/* Sidebar (Overlay) */}
           <div
             className={`fixed inset-y-0 left-0 z-50 bg-zinc-900 h-full transition-all duration-300 ${
@@ -101,6 +101,8 @@ const HomePage: React.FC = () => {
 
           {/* Main Content */}
           <div className="flex flex-col flex-1">
+            {" "}
+            {/* เพิ่ม top สำหรับ content ให้หลบ Navbar */}
             <Navbar
               onToggleSidebar={toggleSidebar}
               isSidebarOpen={isSidebarOpen}

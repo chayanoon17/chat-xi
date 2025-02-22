@@ -14,15 +14,21 @@ interface SidebarProps {
   setChatRooms: React.Dispatch<React.SetStateAction<{ id: string; title: string; createdAt: string }[]>>; 
 }
 
-
 const Sidebar: React.FC<SidebarProps> = ({
   selectedRoomId,
   setSelectedRoomId,
   chatRooms,
-  setChatRooms, 
 }) => {
   const { data: session, status } = useSession();
   const [userEmail, setUserEmail] = useState<string>("");
+
+  // ดึง selectedRoomId จาก localStorage เมื่อโหลดหน้า
+  useEffect(() => {
+    const savedRoomId = localStorage.getItem("selectedRoomId");
+    if (savedRoomId) {
+      setSelectedRoomId(savedRoomId);
+    }
+  }, []);
 
   // ใช้ useEffect เพื่อป้องกันการแสดงค่าซ้ำซ้อน
   useEffect(() => {
@@ -34,7 +40,13 @@ const Sidebar: React.FC<SidebarProps> = ({
   }, [session, status]);
 
   const handleResetChat = () => {
-    setSelectedRoomId("");
+    setSelectedRoomId(""); // รีเซ็ทห้องที่เลือก
+    localStorage.removeItem("selectedRoomId"); // ลบห้องที่เลือกจาก localStorage
+  };
+
+  const handleSelectChatRoom = (roomId: string) => {
+    setSelectedRoomId(roomId);
+    localStorage.setItem("selectedRoomId", roomId); // เก็บห้องที่เลือกลงใน localStorage
   };
 
   const handleDeleteRoom = async (roomId: string) => {
@@ -49,6 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       if (res.ok) {
         setSelectedRoomId(''); // รีเซ็ทห้องที่เลือก
+        localStorage.removeItem("selectedRoomId"); // ลบห้องที่เลือกจาก localStorage
       } else {
         console.error('Failed to delete room');
       }
@@ -56,15 +69,13 @@ const Sidebar: React.FC<SidebarProps> = ({
       console.error('Error deleting room:', error);
     }
   };
-  
-  
-  
 
   return (
     <div className="w-full p-2 text-white flex flex-col space-y-4 h-screen font-light">
       {/* Header */}
       <div className="flex justify-between items-center">
         <p className="text-lg p-2">Chatbot</p>
+        
         <button
           className="rounded-lg bg-zinc-800 p-2"
           onClick={handleResetChat}
@@ -72,7 +83,6 @@ const Sidebar: React.FC<SidebarProps> = ({
           <IoMdAdd size={20} />
         </button>
       </div>
-      
 
       {/* Chat List */}
       <ScrollArea>
@@ -85,7 +95,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 key={room.id}
                 title={room.title}
                 rooms={[room]}
-                onSelectChatRoom={setSelectedRoomId}
+                onSelectChatRoom={handleSelectChatRoom} // เปลี่ยนเป็น handleSelectChatRoom
                 selectedRoomId={selectedRoomId}
                 onDeleteRoom={handleDeleteRoom} // ใช้ฟังก์ชันที่เราเพิ่มเข้ามา
               />
@@ -95,7 +105,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       </ScrollArea>
 
       {/* User Info */}
-      <div className="absolute bottom-0 left-0 right-0 flex items-center space-x-2  p-3 rounded-lg ">
+      <div className="absolute bottom-0 left-0 right-0 flex items-center space-x-2 p-3 rounded-lg ">
         <Avatar className="h-8 w-8">
           <AvatarImage src="https://github.com/shadcn.png" alt="avatar" />
           <AvatarFallback>CN</AvatarFallback>

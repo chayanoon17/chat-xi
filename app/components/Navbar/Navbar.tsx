@@ -1,20 +1,41 @@
-// components/Navbar.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 interface NavbarProps {
-  onToggleSidebar: () => void; // เพิ่ม Prop สำหรับสั่งเปิด-ปิด Sidebar
-  isSidebarOpen: boolean; // รับสถานะของ Sidebar
+  onToggleSidebar: () => void;
+  isSidebarOpen: boolean;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isSidebarOpen }) => {
+  const { data: session, status } = useSession();
+  const [userEmail, setUserEmail] = useState<string>("");
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.email) {
+      setUserEmail(session.user.email);
+    } else {
+      setUserEmail("Guest");
+    }
+  }, [session, status]);
+
   return (
-    <div className="text-white bg-neutral-950 flex w-full items-center p-2">
-      <div className="flex items-center">
+    <nav className="text-white bg-neutral-950 flex items-center justify-between px-4 py-3 shadow-md w-full">
+      {/* ปุ่ม Sidebar */}
+      <div className="flex items-center gap-2">
         <button
           onClick={onToggleSidebar}
-          className="p-2 hover:bg-zinc-700 rounded-md"
+          className={`p-2 hover:bg-zinc-700 rounded-md transition ${
+            isSidebarOpen ? "hidden sm:block" : "block"
+          }`}
         >
           {isSidebarOpen ? (
             <FiX className="w-6 h-6" />
@@ -22,15 +43,26 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isSidebarOpen }) => {
             <FiMenu className="w-6 h-6" />
           )}
         </button>
+        <h1 className="text-lg font-semibold">ChatBot</h1>
 
-        
       </div>
 
-      {/* ใช้ ml-auto เพื่อผลักปุ่ม Logout ไปทางขวา */}
-      <div className="ml-auto flex items-center px-4">
-        <Button onClick={() => signOut({ callbackUrl: "/" })}>Logout</Button>
+      {/* ปุ่ม Logout อยู่ทางขวา */}
+      <div className="ml-auto flex items-center">
+        <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">Setting</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56 ">
+        <DropdownMenuLabel className="h-10 px-4 py-4">{userEmail}</DropdownMenuLabel>
+        <DropdownMenuItem className="h-10 px-4 py-4 hover:bg-zinc-800" onClick={() => signOut({ callbackUrl: "/" })}>
+          Log out
+          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
       </div>
-    </div>
+    </nav>
   );
 };
 

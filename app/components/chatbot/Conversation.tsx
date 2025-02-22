@@ -5,6 +5,7 @@ import MessageList from "./MessageList";
 import { motion } from "framer-motion";
 import { Suspense } from "react";
 
+
 interface Message {
   question: string;
   answer: string;
@@ -62,7 +63,7 @@ const Conversation: React.FC<ConversationProps> = ({
   const fetchPreviousMessages = useCallback(async () => {
     if (!chatRoomId) return; // ✅ ป้องกันการโหลดเมื่อไม่มีห้อง
   
-    setLoading(true);
+
     try {
       setLoading(true);
       const res = await fetch(`/api/auth/chat?chatRoomId=${chatRoomId}`);
@@ -153,6 +154,7 @@ const Conversation: React.FC<ConversationProps> = ({
           return updated;
         });
       }
+
     } catch (err) {
       console.error(err);
       setError("เกิดข้อผิดพลาดในการส่งข้อความ");
@@ -164,6 +166,7 @@ const Conversation: React.FC<ConversationProps> = ({
     if (chatRoomId) {
       fetchPreviousMessages();
     }
+
   }, [chatRoomId, fetchPreviousMessages]);
 
   useEffect(() => {
@@ -185,10 +188,12 @@ const Conversation: React.FC<ConversationProps> = ({
         <div className="flex flex-col h-full w-full mx-auto bg-neutral-950">
           <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-neutral-900">
             <div className="mx-auto max-w-3xl justify-center items-center">
+            
               <MessageList messages={messages} error={error} />
               <div ref={endOfMessagesRef} />
             </div>
           </div>
+          
 
           {!chatRoomId && (
             <div className="lex mx-auto px-4 p-4 pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">

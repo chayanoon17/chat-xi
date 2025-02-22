@@ -5,8 +5,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../../lib/authOptions'; 
 import { ObjectId } from 'mongodb'; // Import ObjectId
 
-
-
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
