@@ -1,12 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Conversation from "../components/chatbot/Conversation";
 import Navbar from "../components/Navbar/Navbar";
 import Sidebar from "../components/Sidebar/sidebar";
 import { SessionProvider } from "next-auth/react";
-import { Suspense } from "react";
 
 interface ChatRoom {
   id: string;
@@ -18,28 +17,16 @@ const HomePage: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/");
     }
   }, [status, router]);
-
-  const handleSelectChatRoom = (roomId: string) => {
-    setSelectedRoomId(roomId);
-  };
-
-  const handleResetChat = () => {
-    setSelectedRoomId(null); // รีเซ็ตห้องที่เลือก
-    setChatRooms([]); // ลบห้องแชททั้งหมด
-  };
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => !prev);
-  };
 
   useEffect(() => {
     const fetchChatRooms = async () => {
@@ -60,65 +47,65 @@ const HomePage: React.FC = () => {
     fetchChatRooms();
   }, [selectedRoomId]);
 
+  useEffect(() => {
+    if (endOfMessagesRef.current) {
+      endOfMessagesRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatRooms]);
+
   if (status !== "authenticated") {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-xl text-gray-600">
-          You need to be logged in to view this page.
-        </p>
+        <p className="text-xl text-gray-600">You need to be logged in to view this page.</p>
       </div>
     );
   }
 
   return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <SessionProvider>
-        <div className="flex h-screen overflow-hidden relative">
-          {/* Sidebar (Overlay) */}
+    <SessionProvider>
+      <Suspense fallback={<p className="text-center mt-10">Loading...</p>}>
+        <div className="flex h-screen overflow-hidden bg-neutral-950">
+          {/* Sidebar */}
           <div
-            className={`fixed inset-y-0 left-0 z-50 bg-zinc-900 h-full transition-all duration-300 ${
+            className={`fixed inset-y-0 left-0 z-50 bg-zinc-900 transition-all duration-300 ${
               isSidebarOpen ? "w-64 shadow-lg" : "w-0"
             }`}
           >
             {isSidebarOpen && (
               <Sidebar
-                onSelectChatRoom={handleSelectChatRoom}
+                onSelectChatRoom={setSelectedRoomId}
                 selectedRoomId={selectedRoomId}
-                setSelectedRoomId={setSelectedRoomId}
                 chatRooms={chatRooms}
                 setChatRooms={setChatRooms}
+                setSelectedRoomId={setSelectedRoomId}
               />
             )}
           </div>
 
-          {/* Overlay Background (ปิด Sidebar เมื่อคลิกที่พื้นหลัง) */}
+          {/* Overlay to close Sidebar */}
           {isSidebarOpen && (
-            <div
-              className="fixed inset-0 bg-black bg-opacity-50 z-40"
-              onClick={toggleSidebar} // คลิกที่พื้นหลังเพื่อปิด Sidebar
-            />
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => setIsSidebarOpen(false)} />
           )}
 
           {/* Main Content */}
-          <div className="flex flex-col flex-1">
-            {" "}
-            {/* เพิ่ม top สำหรับ content ให้หลบ Navbar */}
-            <Navbar
-              onToggleSidebar={toggleSidebar}
-              isSidebarOpen={isSidebarOpen}
-            />
-            <div className="flex-1 overflow-y-auto">
+          <div className="flex flex-col flex-1 w-full h-full">
+            {/* Navbar */}
+            <Navbar onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} isSidebarOpen={isSidebarOpen} />
+            
+            {/* Chat Container */}
+            <div className="flex flex-1 overflow-auto">
               <Conversation
                 chatRoomId={selectedRoomId || ""}
                 setSelectedRoomId={setSelectedRoomId}
+                resetChat={() => {}}
                 setChatRooms={setChatRooms}
-                resetChat={handleResetChat}
               />
+              <div ref={endOfMessagesRef} />
             </div>
           </div>
         </div>
-      </SessionProvider>
-    </Suspense>
+      </Suspense>
+    </SessionProvider>
   );
 };
 

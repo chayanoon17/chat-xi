@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { IoMdAdd } from "react-icons/io";
-import { useSession } from "next-auth/react";
+import { SessionProvider, useSession } from "next-auth/react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatGroup from "../ChatGroup/ChatGroup";
@@ -71,6 +71,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
+    <SessionProvider session={session}>
     <div className="w-full p-2 text-white flex flex-col space-y-4 h-screen font-light">
       {/* Header */}
       <div className="flex justify-between items-center">
@@ -113,6 +114,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <span className="text-sm">{userEmail}</span>
       </div>
     </div>
+    </SessionProvider>
   );
 };
 

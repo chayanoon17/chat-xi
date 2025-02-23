@@ -183,7 +183,7 @@ const Conversation: React.FC<ConversationProps> = ({
         animate={{ opacity: 1, y: 0 }} // ค่อย ๆ แสดงขึ้นมา
         exit={{ opacity: 0, y: -20 }} // ออกจากหน้าจอแบบเลื่อนขึ้น
         transition={{ duration: 0.4, ease: "easeInOut" }} // ตั้งค่าความเร็ว
-        className="flex flex-col h-full w-full mx-auto bg-neutral-950"
+        className=" w-full mx-auto bg-neutral-950"
       >
         <div className="flex flex-col h-full w-full mx-auto bg-neutral-950">
           <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-neutral-900">

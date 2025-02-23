@@ -11,6 +11,8 @@ interface AIMessageProps {
   isLoading: boolean;
 }
 
+
+
 const ChatGPTCodeBlock: React.FC<{
   inline?: boolean;
   className?: string;
@@ -31,10 +33,10 @@ const ChatGPTCodeBlock: React.FC<{
   }
 
   return (
-    <div className="my-4 rounded-md overflow-hidden bg-neutral-950">
-      <div className="flex items-center justify-between bg-neutral-950 px-4 py-2">
-        <span className="text-xs text-gray-300 font-medium">
-          {className?.replace("language-", "") || "Code"}
+    <div className="my-4 rounded-xl overflow-hidden bg-zinc-900 ">
+      <div className="flex items-center justify-between bg-zinc-900 px-4 py-2">
+        <span className="text-xs text-gray-300 font-medium ">
+          {className?.replace("language-", "") || "Code" }
         </span>
         <button
           onClick={handleCopy}
@@ -47,6 +49,8 @@ const ChatGPTCodeBlock: React.FC<{
         language={className?.replace("language-", "") || ""}
         style={vscDarkPlus}
         showLineNumbers
+        wrapLines
+        
       >
         {String(children)}
       </SyntaxHighlighter>
@@ -127,9 +131,9 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
         </div>
       </div>
 
-      <div className="flex space-x-2 mt-2 justify-start">
+      <div className="flex space-x-2 mt-2 ml-12 justify-start">
         <button
-          className="p-2 border rounded-md hover:bg-zinc-700 transition"
+          className="p-2  border rounded-md hover:bg-zinc-700 transition"
           onClick={handleCopy}
         >
           <FiCopy
