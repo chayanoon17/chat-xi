@@ -52,10 +52,10 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isSidebarOpen }) => {
         <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline">Setting</Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 ">
-        <DropdownMenuLabel className="h-10 px-4 py-4">{userEmail}</DropdownMenuLabel>
-        <DropdownMenuItem className="h-10 px-4 py-4 hover:bg-zinc-800" onClick={() => signOut({ callbackUrl: "/" })}>
+      </DropdownMenuTrigger >
+      <DropdownMenuContent className="w-56 bg-neutral-950 border">
+        <DropdownMenuLabel className="h-10 px-4 py-4 bg-neutral-950 ">Hi: {userEmail}</DropdownMenuLabel>
+        <DropdownMenuItem className="h-10 px-4 py-4 bg-neutral-950  hover:bg-zinc-800" onClick={() => signOut({ callbackUrl: "/" })}>
           Log out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
