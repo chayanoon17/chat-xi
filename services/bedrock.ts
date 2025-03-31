@@ -8,6 +8,7 @@ if (!region || !accessKeyId || !secretAccessKey) {
   throw new Error('AWS credentials are not set in the environment variables');
 }
 
+
 // ตั้งค่า AWS Bedrock
 const llm = new ChatBedrockConverse({
   model: 'anthropic.claude-3-5-sonnet-20240620-v1:0',
@@ -24,3 +25,6 @@ export async function getLLMStream(messages: { role: string; content: string }[]
   const stream = await llm.stream(messages);
   return stream; // คืนค่า ReadableStream ให้ API ใช้
 }
+
+
+
