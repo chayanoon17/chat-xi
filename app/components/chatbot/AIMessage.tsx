@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { FiCopy, FiThumbsUp, FiThumbsDown } from "react-icons/fi";
+import { motion } from "framer-motion";
 
 interface AIMessageProps {
   answer: string;
@@ -104,6 +105,7 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
           </svg>
         </div>
 
+      
         <div className="prose prose-invert px-4 py-2 rounded max-w-3xl w-full ">
         {isLoading && (
             <div className="text-sm text-gray-400 mt-2 animate-pulse">
@@ -129,6 +131,7 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
           </ReactMarkdown>
           
         </div>
+
       </div>
 
       <div className="flex space-x-2 mt-2 ml-12 justify-start">

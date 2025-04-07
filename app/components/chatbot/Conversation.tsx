@@ -5,7 +5,6 @@ import MessageList from "./MessageList";
 import { motion } from "framer-motion";
 import { Suspense } from "react";
 
-
 interface Message {
   question: string;
   answer: string;
@@ -61,21 +60,22 @@ const Conversation: React.FC<ConversationProps> = ({
   }, [chatRoomId]);
 
   const fetchPreviousMessages = useCallback(async () => {
-    if (!chatRoomId) return; // ✅ ป้องกันการโหลดเมื่อไม่มีห้อง
-  
-
+    if (!chatRoomId) return; //  ป้องกันการโหลดเมื่อไม่มีห้อง
+    setLoading(true);
     try {
       setLoading(true);
       const res = await fetch(`/api/auth/chat?chatRoomId=${chatRoomId}`);
       if (!res.ok) throw new Error("Failed to fetch previous messages");
-  
+
       const data = await res.json();
-      setMessages(data.messages.map((msg: MessageData) => ({
-        question: msg.sender === "user" ? msg.content : "",
-        answer: msg.sender === "ai" ? msg.content : "",
-        isLoading: false,
-      })));
-      setLoading(false)
+      setMessages(
+        data.messages.map((msg: MessageData) => ({
+          question: msg.sender === "user" ? msg.content : "",
+          answer: msg.sender === "ai" ? msg.content : "",
+          isLoading: false,
+        }))
+      );
+      setLoading(false);
     } catch (err) {
       console.error(err);
       setError("ไม่สามารถโหลดบทสนทนาเก่าได้");
@@ -83,18 +83,15 @@ const Conversation: React.FC<ConversationProps> = ({
       setLoading(false);
     }
   }, [chatRoomId]);
-  
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
-
 
     setMessages((prev: Message[]) => [
       ...prev,
       { question: message, answer: "", isLoading: true },
     ]);
     setMessage("");
-
 
     try {
       const res = await fetch("/api/auth/chat", {
@@ -104,7 +101,6 @@ const Conversation: React.FC<ConversationProps> = ({
       });
 
       if (!res.ok) throw new Error("Failed to fetch AI response");
-
 
       if (!chatRoomId) {
         const newChatRoomId = res.headers.get("chatRoomId");
@@ -144,7 +140,6 @@ const Conversation: React.FC<ConversationProps> = ({
           }
         }
 
-
         setMessages((prev: Message[]) => {
           const updated = [...prev];
           updated[updated.length - 1] = {
@@ -154,7 +149,6 @@ const Conversation: React.FC<ConversationProps> = ({
           return updated;
         });
       }
-
     } catch (err) {
       console.error(err);
       setError("เกิดข้อผิดพลาดในการส่งข้อความ");
@@ -162,11 +156,10 @@ const Conversation: React.FC<ConversationProps> = ({
   };
 
   useEffect(() => {
-    setMessages([]); 
+    setMessages([]);
     if (chatRoomId) {
       fetchPreviousMessages();
     }
-
   }, [chatRoomId, fetchPreviousMessages]);
 
   useEffect(() => {
@@ -188,15 +181,19 @@ const Conversation: React.FC<ConversationProps> = ({
         <div className="flex flex-col h-full w-full mx-auto bg-neutral-950">
           <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-neutral-900">
             <div className="mx-auto max-w-3xl justify-center items-center">
-            
               <MessageList messages={messages} error={error} />
               <div ref={endOfMessagesRef} />
             </div>
           </div>
-          
 
           {!chatRoomId && (
             <div className="lex mx-auto px-4 p-4 pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
+              <div className="lex mx-auto px-4 p-4 pb-4 md:pb-16 gap-2 w-full md:max-w-3xl">
+                <div className="text-2xl ">Hello there!</div>
+                <div className="text-2xl text-zinc-500">
+                  How can I help you today?
+                </div>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 {suggestedPrompts.map((prompt, index) => (
                   <button

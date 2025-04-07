@@ -51,7 +51,7 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isSidebarOpen }) => {
       <div className="ml-auto flex items-center">
         <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">Setting</Button>
+        <Button variant="outline">Logout</Button>
       </DropdownMenuTrigger >
       <DropdownMenuContent className="w-56 bg-neutral-950 border">
         <DropdownMenuLabel className="h-10 px-4 py-4 bg-neutral-950 ">Hi: {userEmail}</DropdownMenuLabel>
