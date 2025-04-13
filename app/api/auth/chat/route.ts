@@ -5,6 +5,9 @@ import prisma from '../../../../lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../../lib/authOptions';
 
+export const config = {
+  runtime: 'nodejs',  // สำคัญมากสำหรับ Vercel
+};
 
 export async function POST(req: NextRequest) {
   try {
