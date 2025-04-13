@@ -5,10 +5,6 @@ import prisma from '../../../../lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../../lib/authOptions';
 
-export const config = {
-  runtime: 'nodejs',  // สำคัญมากสำหรับ Vercel
-};
-
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -99,7 +95,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
-
 
 export async function GET(req: NextRequest) {
   try {
