@@ -111,7 +111,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           <AvatarImage src="https://github.com/shadcn.png" alt="avatar" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <span className="text-sm">{session?.user.email}</span>
+        <span className="text-sm">{userEmail}</span>
       </div>
     </div>
     </SessionProvider>

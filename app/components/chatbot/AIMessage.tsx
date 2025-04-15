@@ -5,13 +5,11 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { FiCopy, FiThumbsUp, FiThumbsDown } from "react-icons/fi";
-import { motion } from "framer-motion";
 
 interface AIMessageProps {
   answer: string;
   isLoading: boolean;
 }
-
 
 
 const ChatGPTCodeBlock: React.FC<{
@@ -107,11 +105,13 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
 
       
         <div className="prose prose-invert px-4 py-2 rounded max-w-3xl w-full ">
-        {isLoading && (
+          
+        {isLoading && answer && (
             <div className="text-sm text-gray-400 mt-2 animate-pulse">
               Thinking...
             </div>
           )}
+          
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
@@ -125,7 +125,6 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
               li: ({ node, ...props }) => <li className="mb-4" {...props} />,
             }}
           >
-            
             
             {answer}
             

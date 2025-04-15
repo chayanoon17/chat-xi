@@ -56,7 +56,9 @@ const HomePage: React.FC = () => {
   if (status !== "authenticated") {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-xl text-gray-600">You need to be logged in to view this page.</p>
+        <p className="text-xl text-gray-600">
+          You need to be logged in to view this page.
+        </p>
       </div>
     );
   }
@@ -64,8 +66,7 @@ const HomePage: React.FC = () => {
   return (
     <SessionProvider>
       <Suspense fallback={<p className="text-center mt-10">Loading...</p>}>
-      
-        <div className=" h-screen   bg-neutral-950">
+        <div className=" h-screen  bg-neutral-950">
           {/* Sidebar */}
           <div
             className={`fixed inset-y-0 left-0 z-50 bg-zinc-900 transition-all duration-300 ${
@@ -73,7 +74,6 @@ const HomePage: React.FC = () => {
             }`}
           >
             {isSidebarOpen && (
-              
               <Sidebar
                 onSelectChatRoom={setSelectedRoomId}
                 selectedRoomId={selectedRoomId}
@@ -86,14 +86,20 @@ const HomePage: React.FC = () => {
 
           {/* Overlay to close Sidebar */}
           {isSidebarOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => setIsSidebarOpen(false)} />
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 z-40"
+              onClick={() => setIsSidebarOpen(false)}
+            />
           )}
 
           {/* Main Content */}
           <div className="flex flex-col flex-1 w-full h-full">
             {/* Navbar */}
-            <Navbar onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} isSidebarOpen={isSidebarOpen} />
-            
+            <Navbar
+              onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+              isSidebarOpen={isSidebarOpen}
+            />
+
             {/* Chat Container */}
             <div className="flex flex-1 overflow-auto">
               <Conversation
