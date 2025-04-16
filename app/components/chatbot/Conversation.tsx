@@ -42,9 +42,9 @@ const Conversation: React.FC<ConversationProps> = ({
 
   const suggestedPrompts = [
     "What are the advantages of using Next.js?",
-    "Write code to demonstrate Dijkstra's algorithm",
+    "Write code to demonstrate  algorithms",
     "Help me write an essay about Silicon Valley",
-    "What is the weather in San Francisco?",
+    "I need a spaghetti recipe.",
   ];
 
   const handleSuggestedPromptClick = (prompt: string) => {

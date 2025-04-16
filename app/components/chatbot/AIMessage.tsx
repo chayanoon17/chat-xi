@@ -106,7 +106,7 @@ const AIMessage: React.FC<AIMessageProps> = ({ answer, isLoading }) => {
       
         <div className="prose prose-invert px-4 py-2 rounded max-w-3xl w-full ">
           
-        {isLoading && answer && (
+        {isLoading && (
             <div className="text-sm text-gray-400 mt-2 animate-pulse">
               Thinking...
             </div>

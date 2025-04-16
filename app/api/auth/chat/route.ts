@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
         'Cache-Control': 'no-cache',
         'Connection': 'keep-alive',
         'chatRoomId': chatRoomId, 
-        'X-Accel-Buffering': 'no', // ปิดการบัฟเฟอร์ของ Nginx
+        'X-Accel-Buffering': 'no', 
       },
     });
   } catch (error) {
