@@ -83,12 +83,13 @@ export async function POST(req: NextRequest) {
     });
 
     // ส่งข้อมูลกลับไปที่ Frontend พร้อม chatRoomId
-    return new NextResponse(readableStream, {
+    return new Response(readableStream, {
       headers: {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         'Connection': 'keep-alive',
         'chatRoomId': chatRoomId, 
+        'X-Accel-Buffering': 'no', // ปิดการบัฟเฟอร์ของ Nginx
       },
     });
   } catch (error) {

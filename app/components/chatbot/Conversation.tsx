@@ -21,7 +21,6 @@ interface ConversationProps {
   chatRoomId: string | null;
   setSelectedRoomId: (roomId: string) => void;
   resetChat: () => void; // เพิ่ม resetChat props
-
   setChatRooms: React.Dispatch<React.SetStateAction<ChatRoom[]>>; // ส่ง setChatRooms ไปที่นี้
 }
 
@@ -86,7 +85,7 @@ const Conversation: React.FC<ConversationProps> = ({
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
-
+    setLoading(true);
     setMessages((prev: Message[]) => [
       ...prev,
       { question: message, answer: "", isLoading: true },
@@ -94,7 +93,6 @@ const Conversation: React.FC<ConversationProps> = ({
     setMessage("");
 
     try {
-      setLoading(true);
       const res = await fetch("/api/auth/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
