@@ -40,6 +40,7 @@ const Conversation: React.FC<ConversationProps> = ({
   const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+
   const suggestedPrompts = [
     "What are the advantages of using Next.js?",
     "Write code to demonstrate  algorithms",

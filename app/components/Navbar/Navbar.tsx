@@ -43,7 +43,7 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isSidebarOpen }) => {
             <FiMenu className="w-6 h-6" />
           )}
         </button>
-        <h1 className="text-lg font-semibold">ChatBot</h1>
+        <h1 className="text-lg font-semibold">ChatBotXI</h1>
 
       </div>
 

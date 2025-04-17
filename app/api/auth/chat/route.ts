@@ -1,5 +1,5 @@
 // api/auth/chat/route.ts
-export const runtime = 'edge';
+export const runtime = 'nodejs'; // ใช้ Node.js runtime
 import { NextRequest, NextResponse } from 'next/server';
 import { getLLMStream } from '../../../../services/bedrock';
 import prisma from '../../../../lib/prisma';

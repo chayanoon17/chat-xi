@@ -5,6 +5,8 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Label } from "./components/UI/label";
 import { Input } from "./components/UI/input";
+import { motion } from "framer-motion";
+
 
 export default function SignIn() {
   const [email, setEmail] = useState<string>("");
@@ -36,7 +38,15 @@ export default function SignIn() {
   };
 
   return (
+    <motion.div
+            initial={{ opacity: 0, y: 20 }} // เริ่มจากซ่อน
+            animate={{ opacity: 1, y: 0 }} // ค่อย ๆ แสดงขึ้นมา
+            exit={{ opacity: 0, y: -20 }} // ออกจากหน้าจอแบบเลื่อนขึ้น
+            transition={{ duration: 0.4, ease: "easeInOut" }} // ตั้งค่าความเร็ว
+            className=" w-full mx-auto bg-neutral-950"
+          >
     <div className="flex h-dvh w-screen items-start pt-12 md:pt-0 md:items-center justify-center">
+      
       <div className="w-full max-w-md overflow-hidden rounded-2xl flex flex-col gap-12">
         <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
           <h3 className="text-xl font-semibold text-zinc-50">Sign In</h3>
@@ -108,5 +118,7 @@ export default function SignIn() {
         </div>
       </div>
     </div>
+    </motion.div>
+
   );
 }

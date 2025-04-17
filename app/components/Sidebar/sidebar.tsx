@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { IoMdAdd } from "react-icons/io";
-import { SessionProvider, useSession } from "next-auth/react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatGroup from "../ChatGroup/ChatGroup";
@@ -19,7 +18,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   setSelectedRoomId,
   chatRooms,
 }) => {
-  const { data: session, status } = useSession();
   const [userEmail, setUserEmail] = useState<string>("");
 
   // ดึง selectedRoomId จาก localStorage เมื่อโหลดหน้า
@@ -30,14 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   }, []);
 
-  // ใช้ useEffect เพื่อป้องกันการแสดงค่าซ้ำซ้อน
-  useEffect(() => {
-    if (status === "authenticated" && session?.user?.email) {
-      setUserEmail(session.user.email);
-    } else {
-      setUserEmail("Guest");
-    }
-  }, [session, status]);
+  
 
   const handleResetChat = () => {
     setSelectedRoomId(""); // รีเซ็ทห้องที่เลือก
@@ -71,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <SessionProvider session={session}>
+
     <div className="w-full p-2 text-white flex flex-col space-y-4 h-screen font-light">
       {/* Header */}
       <div className="flex justify-between items-center">
@@ -111,10 +102,10 @@ const Sidebar: React.FC<SidebarProps> = ({
           <AvatarImage src="https://github.com/shadcn.png" alt="avatar" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <span className="text-sm">{userEmail}</span>
+        <span className="text-sm">HI</span>
       </div>
     </div>
-    </SessionProvider>
+
   );
 };
 

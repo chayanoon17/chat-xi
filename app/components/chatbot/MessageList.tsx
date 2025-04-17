@@ -14,6 +14,7 @@ interface MessageListProps {
 }
 
 const MessageList: React.FC<MessageListProps> = ({ messages, error }) => (
+  
   <div className="w-full">
     {messages.map((msg, index) => (
       <div key={index}>
