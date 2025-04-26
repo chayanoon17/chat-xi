@@ -128,7 +128,7 @@ export default function SignUp() {
                     ) : (
                       "Sign In"
                     )}
-                    Already have an account? Sign In
+                    <span className="text-gray-400">Already have an account? Sign In</span>
                   </button>
                   {error && (
                     <p className="text-red-500 text-center mt-4">{error}</p>
