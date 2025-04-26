@@ -101,13 +101,6 @@ export default function SignIn() {
                 )}
               </button>
             </form>
-            <button
-              onClick={() => router.push("/demo")}
-              className="bg-white w-full py-2 rounded-md text-black font-semibold hover:bg-zinc-100 hover:text-white"
-
-            >
-              Free trial
-            </button>
           </div>
           
           <div className="text-center">
