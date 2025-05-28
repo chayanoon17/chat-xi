@@ -102,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           <AvatarImage src="https://github.com/shadcn.png" alt="avatar" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <span className="text-sm">HI</span>
+        <span className="text-sm">HI </span>
       </div>
     </div>
 

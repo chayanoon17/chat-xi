@@ -1,7 +1,7 @@
 // api/auth/chat/route.ts
 export const runtime = 'nodejs'; // ใช้ Node.js runtime
 import { NextRequest, NextResponse } from 'next/server';
-import { getLLMStream } from '../../../../services/bedrock';
+import { getLLMStream } from '../../../../services/openrouter';
 import prisma from '../../../../lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../../lib/authOptions';
@@ -24,9 +24,7 @@ export async function POST(req: NextRequest) {
       }, { status: 400 });
     }
 
-
     let chatRoomId = providedChatRoomId;
-
 
     if (!chatRoomId) {
       console.log('Creating new chat room');
@@ -73,11 +71,9 @@ export async function POST(req: NextRequest) {
           return;
         }
 
-
         const chunk = Array.isArray(value?.content) ? value.content.join('') : value?.content ?? '';
         aiResponse += chunk;
         controller.enqueue(new TextEncoder().encode(chunk));
-
         
       },
     });

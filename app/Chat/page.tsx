@@ -64,7 +64,6 @@ const HomePage: React.FC = () => {
   return (
     <SessionProvider>
       <Suspense fallback={<p className="text-center mt-10">Loading...</p>}>
-      
         <div className=" h-screen  bg-neutral-950">
           {/* Sidebar */}
           <div
@@ -73,7 +72,6 @@ const HomePage: React.FC = () => {
             }`}
           >
             {isSidebarOpen && (
-              
               <Sidebar
                 onSelectChatRoom={setSelectedRoomId}
                 selectedRoomId={selectedRoomId}
@@ -83,7 +81,7 @@ const HomePage: React.FC = () => {
               />
             )}
           </div>
-
+          
           {/* Overlay to close Sidebar */}
           {isSidebarOpen && (
             <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => setIsSidebarOpen(false)} />

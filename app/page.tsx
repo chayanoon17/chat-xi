@@ -27,7 +27,7 @@ export default function SignIn() {
         console.error(result.error);
         alert("Login failed: " + result.error);
       } else {
-        router.push("/Chat");
+        router.push("/chat");
       }
     } catch (error) {
       console.log("error", error);

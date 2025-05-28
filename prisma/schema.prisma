@@ -38,3 +38,12 @@ model Message {
 
 }
 
+model Document {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId // ObjectId สำหรับ MongoDB
+  content   String
+  embedding String
+  metadata  String
+  createdAt DateTime @default(now())
+}
+
+
